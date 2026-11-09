@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 // target when no user matches. Forces bcrypt.compare to do its work even
 // on "user not found" so response timing doesn't leak which emails exist.
 // The plaintext is irrelevant — it must never match a real password.
-const DUMMY_HASH_FOR_TIMING_DEFENSE = bcrypt.hashSync('rayai-dummy-target', 10);
+const DUMMY_HASH_FOR_TIMING_DEFENSE = bcrypt.hashSync('custeio-dummy-target', 10);
 
 export async function hashPassword(password: string) {
   const saltRounds = 10;

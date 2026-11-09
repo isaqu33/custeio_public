@@ -519,7 +519,7 @@ export const ptBR: AppCopy = {
     },
     jobs: {
       columns: {
-        examId: 'Referência',
+        reference: 'Referência',
         kind: 'Tipo',
         status: 'Status',
         createdAt: 'Criado em',
@@ -1501,7 +1501,7 @@ export const ptBR: AppCopy = {
   },
   jobs: {
     columns: {
-      examId: 'Referência',
+      reference: 'Referência',
       kind: 'Tipo',
       status: 'Status',
       createdAt: 'Criado em',
@@ -1544,7 +1544,7 @@ export const ptBR: AppCopy = {
     },
     detail: {
       view: 'Ver job',
-      title: 'Job {examId}',
+      title: 'Job {reference}',
       description: 'Progresso, passos e resultado do job.',
       loading: 'Carregando job...',
       loadFailed: 'Falha ao carregar o job.',

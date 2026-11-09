@@ -34,7 +34,7 @@ type JobsListParams = {
 // Only the fields the listing table actually renders. Projecting this keeps the
 // step logs, payload and progress off the wire — the list can be large, and
 // those nested fields belong to the detail view.
-const LIST_PROJECTION = 'examId organizationId kind type status createdAt result';
+const LIST_PROJECTION = 'reference organizationId kind type status createdAt result';
 
 function isScopedOrganizationId(organizationId?: string) {
   return Boolean(
@@ -58,7 +58,7 @@ function buildCreatedAtFilter(params: JobsListParams) {
   return createdAtFilter;
 }
 
-export const JOB_SEARCH_FIELDS: readonly string[] = ['examId', 'kind', 'type', 'status'];
+export const JOB_SEARCH_FIELDS: readonly string[] = ['reference', 'kind', 'type', 'status'];
 
 // The platform-wide CSV reports are stamped with one arbitrary organization id, so tenant scoping alone
 // would surface them to whichever clinic drew the short straw; the runs of a cron have no organization at
@@ -95,7 +95,7 @@ function buildJobsQuery(
   if (q) {
     const safeQ = escapeRegex(q);
     const condition = { $regex: safeQ, $options: 'i' };
-    // Searching every field at once makes "done" match a status AND any examId
+    // Searching every field at once makes "done" match a status AND any reference
     // containing it. The picker beside the input narrows to one field; an
     // unknown/absent value keeps the old broad behavior.
     const searchType = params.searchType ?? '';
@@ -185,7 +185,7 @@ export async function getJobsListForSession(
 
 type JobDetailLean = {
   _id: unknown;
-  examId?: string;
+  reference?: string;
   organizationId: unknown;
   kind?: string;
   type: string;
@@ -227,7 +227,7 @@ export async function getJobDetailForSession(
 
   return {
     _id: String(job._id),
-    examId: String(job.examId ?? ''),
+    reference: String(job.reference ?? ''),
     organizationId: job.organizationId ? String(job.organizationId) : '',
     kind: job.kind,
     type: job.type,

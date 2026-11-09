@@ -8,7 +8,6 @@ import { totalPages } from '@/app/lib/pagination';
 import {
   createOrganization,
   createStore,
-  getExams,
   passwordChange,
   safeSearchRegex,
 } from '@/app/lib/validations';
@@ -92,14 +91,6 @@ describe('server lib core', () => {
       expect(() =>
         passwordChange.parse({ newPassword: '12345678', confirmPassword: '87654321' }),
       ).toThrow('Passwords do not match.');
-    });
-
-    it('coerces paging defaults for exams query', () => {
-      const parsed = getExams.parse({});
-      expect(parsed.page).toBe(1);
-      expect(parsed.limit).toBe(20);
-      expect(parsed.searchType).toBe('name');
-      expect(parsed.period).toBe('15');
     });
   });
 

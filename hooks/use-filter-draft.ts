@@ -17,8 +17,6 @@ import { useState } from 'react';
  * `react-hooks/set-state-in-effect` rule pushes you toward. It compares values
  * rather than object identity, so a `router.refresh()` — same applied filters,
  * new object — leaves a half-typed draft alone.
- *
- * Ported from the sibling worklist so both apps behave identically here.
  */
 export function useFilterDraft<T extends Record<string, string>>(applied: T) {
   const [draft, setDraft] = useState(applied);

@@ -247,7 +247,7 @@ async function probeAlloyStore(id: string, store: LeanDoc): Promise<AlloyConnect
  * "Testar conexão" — one real Alloy call (see app/lib/alloy-client.ts),
  * recorded onto the store so both the connection status and the rate-limit
  * usage shown to an operator come from something Alloy actually said, not a
- * counter KairosFlow guessed at. Only meaningful for `provider: 'alloy'`
+ * counter Custeio guessed at. Only meaningful for `provider: 'alloy'`
  * stores; called with anything else is a no-op that reports not-applicable
  * rather than erroring, since the action button doesn't hide itself yet.
  */

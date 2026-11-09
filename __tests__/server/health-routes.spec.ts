@@ -35,7 +35,7 @@ describe('health route aliases', () => {
 
   it('serves healthz as a liveness probe', async () => {
     const response = await healthz(
-      new Request('https://raypilot.example.com/health/healthz', {
+      new Request('https://custeio.example.com/health/healthz', {
         headers: { 'x-forwarded-for': '203.0.113.10, 10.0.0.1' },
       }),
     );
@@ -50,7 +50,7 @@ describe('health route aliases', () => {
   });
 
   it('serves readyz as a readiness probe', async () => {
-    const response = await readyz(new Request('https://raypilot.example.com/health/readyz'));
+    const response = await readyz(new Request('https://custeio.example.com/health/readyz'));
 
     await expect(response.json()).resolves.toEqual(
       expect.objectContaining({
@@ -74,7 +74,7 @@ describe('health route aliases', () => {
       },
     });
 
-    const response = await readyz(new Request('https://raypilot.example.com/health/readyz'));
+    const response = await readyz(new Request('https://custeio.example.com/health/readyz'));
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual(

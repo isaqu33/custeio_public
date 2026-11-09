@@ -324,7 +324,7 @@ export async function recordNfeXmlExport(input: {
     payload,
     status: 'done',
     type: 'AdHoc',
-    examId: `NFE-XML-${input.accessKey}-${Date.now()}`,
+    reference: `NFE-XML-${input.accessKey}-${Date.now()}`,
     organizationId: toObjectId(input.organizationId),
     params: { payloadOriginal: payload, userLoggedId: input.requestedByUserId },
     result: {

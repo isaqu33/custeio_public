@@ -34,7 +34,7 @@ const JobsSchema = new Schema(
       queueName: { type: String, default: 'custeio-jobs' },
       queueJobId: { type: String },
     },
-    examId: { type: String, required: true, index: true },
+    reference: { type: String, required: true, index: true },
     // Absent on platform jobs: the runs of a cron (kind `cron.*`) belong to no organization, only
     // System/Support see them (system-only-kinds.ts).
     organizationId: {
@@ -104,7 +104,7 @@ const JobsSchema = new Schema(
   },
 );
 
-JobsSchema.index({ examId: 1, organizationId: 1 }, { unique: true });
+JobsSchema.index({ reference: 1, organizationId: 1 }, { unique: true });
 JobsSchema.index({ organizationId: 1, createdAt: -1 });
 JobsSchema.index({ organizationId: 1, status: 1, createdAt: -1 });
 JobsSchema.index({ kind: 1, status: 1, createdAt: -1 });

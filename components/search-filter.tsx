@@ -18,8 +18,7 @@ import { useFilterDraft } from '@/hooks/use-filter-draft';
 export type SearchTypeOption = { value: string; label: string };
 
 /**
- * The single-field search card shared by the listing screens, matching the
- * sibling worklist: an uppercase label, an optional field picker glued to the
+ * The single-field search card shared by the listing screens, an uppercase label, an optional field picker glued to the
  * input, and the apply/clear icon buttons.
  *
  * Pass `searchTypeOptions` only when the service actually narrows by field —

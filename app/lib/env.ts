@@ -4,15 +4,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   APP_LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
   APP_LOG_FORMAT: z.enum(['pretty', 'json']).optional(),
-  APP_SERVICE_NAME: z.string().min(1).default('rayai'),
-  // Public base URL of the app, used to build absolute callback URLs (e.g. the
-  // Chat Tester completion webhook). Optional — undefined falls back to polling.
+  APP_SERVICE_NAME: z.string().min(1).default('custeio'),
+  // Public base URL of the app, used to build absolute callback URLs.
   APP_BASE_URL_FRONT: z.string().optional(),
-  // Space-separated customer origins allowed to embed the `/chat-widget` iframe,
-  // appended to `'self'` in its frame-ancestors CSP (see next.config.mjs, which
-  // reads process.env directly). Empty → only same-origin embedding (our test
-  // viewer). Example: "https://clinicA.com https://clinicB.com".
-  APP_WIDGET_FRAME_ANCESTORS: z.string().optional(),
   DATABASE_URL: z.string().optional(),
   REDIS_HOST: z.string().default('127.0.0.1'),
   REDIS_PORT: z.coerce.number().int().positive().default(6379),
@@ -37,8 +31,8 @@ const envSchema = z.object({
   APP_USER_EMAIL: z.string().optional(),
   BOOTSTRAP_ADMIN_EMAIL: z.string().optional(),
   // Alloy developer credentials — see docs/features/alloy-api.md. One value for the
-  // whole KairosFlow install (not per-store): unlike the per-loja
-  // `apiKey`/`externalId` on `Stores`, this identifies KairosFlow itself
+  // whole Custeio install (not per-store): unlike the per-loja
+  // `apiKey`/`externalId` on `Stores`, this identifies Custeio itself
   // as an integrator with the Alloy platform. ALLOY_API_HOST is the `{{host}}`
   // from the Postman collections, only known once the developer panel is reached.
   ALLOY_INTEGRATOR_TOKEN: z.string().min(1).optional(),
@@ -69,9 +63,8 @@ const envSchema = z.object({
   // `getproducts` request of the store's 2/minute Alloy quota, so this only has
   // to stop the button being mashed, not protect a scarce resource.
   ALLOY_CATALOG_SYNC_COOLDOWN_MINUTES: z.coerce.number().min(0).default(10),
-  // The RayPilot provider key that runs EVERY organization's analyses and chat
-  // turns. Stored plaintext in the env (never per-org, never in the DB), so no
-  // decryption. All optional: unset simply resolves to no AI config, which the
+  // The platform's AI provider key, shared by every organization. Stored in the env
+  // (never per-org, never in the DB), so no decryption. All optional: unset simply resolves to no AI config, which the
   // callers report as "no provider configured".
   PLATFORM_AI_PROVIDER: z.enum(['gemini', 'claude', 'openai']).optional(),
   PLATFORM_AI_MODEL: z.string().min(1).optional(),
@@ -92,7 +85,7 @@ const envSchema = z.object({
   // /api/assets/[...blobPath] — user profile avatars today (see
   // app/api/users/profile/route.ts); branding used to be the other consumer
   // before its admin page was removed.
-  APP_SYSTEM_ASSETS_CONTAINER: z.string().default('radiologistaicompanionblob'),
+  APP_SYSTEM_ASSETS_CONTAINER: z.string().default('custeio-assets'),
   APP_BULL_KEEP_FAILED_JOBS: z.coerce.number().int().positive().default(1000),
   // How many jobs one worker processes at once. This is the outermost multiplier of
   // the worker's peak memory (see the mem_limit note in docker-compose.prod.yml):
@@ -106,15 +99,14 @@ const envSchema = z.object({
   APP_WORKER_QUEUE_STATS_INTERVAL_MS: z.coerce.number().int().nonnegative().default(60_000),
   // Attempts per job, and the base delay of the exponential backoff between them
   // (delay, 2×, 4×, …). These must span a real provider outage: at 3 attempts /
-  // 5s the retries were exhausted ~15s in, so a one-minute AI outage failed the
-  // study permanently while the provider was already back. 6 / 15s spans ~8min.
+  // 5s the retries were exhausted ~15s in, so a one-minute outage failed the job
+  // permanently while the provider was already back. 6 / 15s spans ~8min.
   // Not set higher because Bull v4 has no "unrecoverable error": a genuinely
-  // broken study (corrupt zip) also burns every attempt, re-streaming each time.
+  // broken payload also burns every attempt.
   APP_BULL_JOB_ATTEMPTS: z.coerce.number().int().positive().default(6),
   APP_BULL_BACKOFF_DELAY_MS: z.coerce.number().int().positive().default(15_000),
-  // DICOM analysis pipeline (worker): DCMTK binaries + conversion tuning.
   // How many times the Azure blob download stream auto-resumes after a dropped
-  // socket before giving up (keeps long study-zip streams resilient).
+  // socket before giving up.
   APP_BLOB_DOWNLOAD_MAX_RETRIES: z.coerce.number().int().min(0).default(5),
   // Hard ceiling on an uploaded file (NF-e XML/PDF batches). It is also the body
   // size Next buffers in memory per upload: next.config.mjs reads this same

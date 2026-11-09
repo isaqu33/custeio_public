@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-const DENSITY_STORAGE_KEY = 'rayai-ui-density';
+const DENSITY_STORAGE_KEY = 'custeio-ui-density';
 const COMPACT_CLASS = 'compact';
 
 type UiDensity = 'comfortable' | 'compact';

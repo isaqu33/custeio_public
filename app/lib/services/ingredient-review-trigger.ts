@@ -23,7 +23,7 @@ export async function requestIngredientsReviewAfterCapture(storeId: string): Pro
     await createAndEnqueueJob({
       kind: 'ai.ingredients.review',
       organizationId,
-      examId: `INGREDIENTS-AI-REVIEW-${storeId}-auto-${Date.now()}`,
+      reference: `INGREDIENTS-AI-REVIEW-${storeId}-auto-${Date.now()}`,
       type: 'AdHoc',
       payload: { storeId },
     });

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-export default function LoadingExams() {
+export default function LoadingOrganizations() {
   return (
     <div className="flex w-full flex-1 flex-col items-center">
       <div className="flex w-full max-w-[1400px] flex-1 flex-col gap-2">

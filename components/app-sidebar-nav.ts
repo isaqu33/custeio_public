@@ -43,8 +43,7 @@ const FULL_ACCESS: SidebarAccess = { features: null, hasSystemAccess: true };
 // Organization follows the fixed, curated order in `FIXED_ITEM_ORDER` below
 // (Dashboard, then Stock, then Products) — that is the order the owner works
 // through the pipeline in, not alphabetical. System has no entry there, so it
-// keeps the older rule: entries sorted by the ACTIVE locale's label, the same
-// rule the sibling worklist follows — with a menu this long, a reader scanning
+// keeps the older rule: entries sorted by the ACTIVE locale's label, with a menu this long, a reader scanning
 // for one entry beats any curated "importance" order we could invent, and
 // sorting by locale (not a fixed declaration order) means a list hand-sorted
 // in English doesn't read as unsorted in pt-BR.

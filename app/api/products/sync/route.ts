@@ -50,7 +50,7 @@ export const POST = withObservability<{}>(AppFeature.PRODUCTS_SYNC_CATALOG, asyn
   const created = await createAndEnqueueJob({
     kind: 'pos.catalog.sync',
     organizationId,
-    examId: `CATALOG-SYNC-${storeId}-${Date.now()}`,
+    reference: `CATALOG-SYNC-${storeId}-${Date.now()}`,
     type: 'AdHoc',
     config: syncConfig,
     payload: { requestedByUserId: sessionWithUser.user.id, storeId },

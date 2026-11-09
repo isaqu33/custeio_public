@@ -23,7 +23,7 @@ export default async function JobsPage(props: AppPageProps) {
   const searchParams = await props.searchParams;
   const page = getSearchParamNumber(searchParams, 'page', 1);
   const searchTerm = getSearchParamString(searchParams, 'q', '');
-  const searchType = getSearchParamString(searchParams, 'searchType', 'examId');
+  const searchType = getSearchParamString(searchParams, 'searchType', 'reference');
   const jobKind = getSearchParamString(searchParams, 'kind', 'all');
   const organizationId = getSearchParamString(searchParams, 'organizationId', 'all');
   const dateFrom = getSearchParamString(searchParams, 'dateFrom', '');

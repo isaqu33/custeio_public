@@ -40,7 +40,7 @@ export const POST = withObservability<{}>(
     const created = await createAndEnqueueJob({
       kind: 'sefaz.nfe.received',
       organizationId,
-      examId: `NFE-SYNC-${storeId}-${Date.now()}`,
+      reference: `NFE-SYNC-${storeId}-${Date.now()}`,
       type: 'AdHoc',
       config: SEFAZ_SYNC_JOB_CONFIG,
       payload: { requestedByUserId: sessionWithUser.user.id, storeId, mode: 'sefaz' },

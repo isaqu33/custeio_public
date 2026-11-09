@@ -47,7 +47,7 @@ export function classifyRuntimeRoute(path: string): RuntimeRouteKind {
   // Mongo and Redis unreachable — as healthy.
   if (path === '/healthz' || path === '/readyz') return 'health';
   if (path === '/api/health' || path.startsWith('/api/health/')) return 'health';
-  // RayPilot's token-authenticated ingestion surface (study upload + analyses).
+  // Token-authenticated ingestion surface (webhooks).
   if (path.startsWith('/api/v1/')) return 'ingestion-api';
   if (path.startsWith('/api')) return 'admin-api';
   return 'ui';

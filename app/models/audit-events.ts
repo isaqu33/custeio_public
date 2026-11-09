@@ -16,8 +16,7 @@ const AuditEventSchema = new Schema(
       index: true,
     },
     // Null when the actor is not a signed-in user — a worker or a token-authed
-    // ingestion call. The Worklist attributes those to a seeded machine user;
-    // RayAI has no such seed, so the absence is modelled directly and the UI
+    // ingestion call. Events raised outside a human session carry no actor, so the absence is modelled directly and the UI
     // renders it as "System".
     actorUserId: { type: Schema.Types.ObjectId, ref: 'Users', default: null },
     // Dotted verb, e.g. 'token.create'. Free-form on purpose: an enum here would

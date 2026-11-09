@@ -45,7 +45,6 @@ export async function runQueuedJob(job: Job<{ jobId: string }>) {
       $push: {
         logs: {
           jobStatus: 'running',
-          examStatus: dbJob.status ?? 'queued',
           message: `Worker assumiu o job (tipo=${kind})`,
           timestamp: new Date(),
           step: 'worker-fetch',

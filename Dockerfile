@@ -1,4 +1,4 @@
-ARG RUNTIME_BASE_IMAGE=kairosflow-runtime-base:node22
+ARG RUNTIME_BASE_IMAGE=custeio-runtime-base:node22
 
 FROM ${RUNTIME_BASE_IMAGE} AS runtime-base
 

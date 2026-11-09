@@ -18,11 +18,11 @@ const options = {
   clean: args.has('--clean') || process.env.PROD_CLEAN === 'true',
 };
 
-const cloudImageTag = process.env.PROD_CLOUD_IMAGE_TAG ?? `rayai:${VERSION}`;
+const cloudImageTag = process.env.PROD_CLOUD_IMAGE_TAG ?? `custeio:${VERSION}`;
 const runtimeBaseImageTag =
   process.env.PROD_RUNTIME_BASE_IMAGE_TAG ??
   process.env.RUNTIME_BASE_IMAGE ??
-  'rayai-runtime-base:node22-dcmtk';
+  'custeio-runtime-base:node22';
 let runtimeBaseBuilt = false;
 
 async function main() {
@@ -57,7 +57,7 @@ async function buildCloud() {
     '-t',
     cloudImageTag,
     '-t',
-    'rayai:latest',
+    'custeio:latest',
     '.',
   ]);
 }

@@ -77,7 +77,7 @@ describe('POST /api/jobs/list', () => {
       {
         _id: 'job-1',
         organizationId: 'org-1',
-        examId: 'EXAM-1',
+        reference: 'JOB-1',
         type: 'Gateway',
         status: 'done',
         createdAt: new Date().toISOString(),

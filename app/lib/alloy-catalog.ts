@@ -1,4 +1,4 @@
-// Alloy's `GET /api/catalog/getproducts`, reduced to what KairosFlow keeps
+// Alloy's `GET /api/catalog/getproducts`, reduced to what Custeio keeps
 // (docs/features/alloy-api.md). The payload's `produtos` are actually
 // CATEGORIES; each carries its `items`, and each item its complement groups
 // (`categorias_de_complemento`) and complements — the whole menu in one call,

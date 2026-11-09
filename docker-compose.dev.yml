@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
       target: development
       args:
-        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-custeio-runtime-base:node22}
     command: npm run dev -- -H 0.0.0.0 -p 3000 --webpack
     ports:
       - '3030:3000'
@@ -37,7 +37,7 @@ services:
       # the host app (.env.local -> Azurite), so uploads and the worker end up in
       # different places and the job dies with ContainerNotFound.
       APP_AZURE_STORAGE_CONNECTION_STRING: ${DEV_AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite-custeio:10000/devstoreaccount1;}
-      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/custeio?authSource=admin'
       REDIS_HOST: redis-custeio
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile
       target: development
       args:
-        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-custeio-runtime-base:node22}
     command: npm run entrypoint
     env_file:
       - .env
@@ -92,7 +92,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
-      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/custeio?authSource=admin'
     volumes:
       - .:/app
       - /app/node_modules

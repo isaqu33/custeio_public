@@ -5,7 +5,7 @@ name: custeio
 # time (a runtime env var would leave the browser with Sentry disabled); the
 # server-side `SENTRY_DSN` arrives at runtime through `.env`.
 x-app-build-args: &app-build-args
-  RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+  RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-custeio-runtime-base:node22}
   NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
   NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE:-0}
   NEXT_PUBLIC_SENTRY_REPLAY_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_REPLAY_SAMPLE_RATE:-0}
@@ -36,7 +36,7 @@ services:
       APP_LOAD_INGESTION_API: 'false'
       APP_LOAD_GATEWAY_API: 'false'
       APP_LOAD_JOBS: 'false'
-      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/custeio?authSource=admin'
       REDIS_HOST: redis-custeio
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -78,7 +78,7 @@ services:
       APP_LOAD_INGESTION_API: 'true'
       APP_LOAD_GATEWAY_API: 'true'
       APP_LOAD_JOBS: 'false'
-      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/custeio?authSource=admin'
       REDIS_HOST: redis-custeio
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -125,7 +125,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
-      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/custeio?authSource=admin'
     networks:
       - app-network
     restart: always

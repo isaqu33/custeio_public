@@ -27,7 +27,7 @@ const LIVE_REFRESH_MS = 5_000;
 
 // Per-row job detail modal (matches the listing-page modal pattern: no page
 // navigation). Fetches the full job + conversation when opened.
-export function JobDetailModal({ jobId, examId }: { jobId: string; examId: string }) {
+export function JobDetailModal({ jobId, reference }: { jobId: string; reference: string }) {
   const copy = useCopy();
   const [open, setOpen] = React.useState(false);
   const [detail, setDetail] = React.useState<JobDetail | null>(null);
@@ -100,7 +100,7 @@ export function JobDetailModal({ jobId, examId }: { jobId: string; examId: strin
           wraps into a stack. */}
       <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{formatCopy(copy.jobs.detail.title, { examId })}</DialogTitle>
+          <DialogTitle>{formatCopy(copy.jobs.detail.title, { reference })}</DialogTitle>
           <DialogDescription>{copy.jobs.detail.description}</DialogDescription>
         </DialogHeader>
         <ModalDataState

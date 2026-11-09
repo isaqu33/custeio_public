@@ -69,7 +69,7 @@ export async function resumePendingSefazSyncs(now: Date = new Date()): Promise<S
         {
           kind: 'sefaz.nfe.received',
           organizationId: String(store.organizationId),
-          examId: `NFE-SYNC-${storeId}-${now.getTime()}`,
+          reference: `NFE-SYNC-${storeId}-${now.getTime()}`,
           type: 'AdHoc',
           config: SEFAZ_SYNC_JOB_CONFIG,
           payload: { requestedByUserId: SEFAZ_RESUME_REQUESTER, storeId, mode: 'sefaz' },

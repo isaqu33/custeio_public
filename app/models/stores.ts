@@ -42,7 +42,7 @@ const StoreSchema = new Schema(
     webhookKeyHash: { type: String, select: false },
     // No Alloy endpoint returns a store logo/photo (checked every catalog/delivery/
     // atendimento/fidelidade endpoint — only item and category-cover images exist).
-    // Set by hand in KairosFlow until/unless Alloy exposes one.
+    // Set by hand in Custeio until/unless Alloy exposes one.
     imageUrl: { type: String, trim: true },
     // Set by a health check hitting the provider API, not by the operator.
     status: {
@@ -57,7 +57,7 @@ const StoreSchema = new Schema(
     lastError: { type: String },
     lastSyncAt: { type: Date },
     // Read straight off Alloy's own `x-ratelimit-*` response headers on the last
-    // health check (see app/lib/alloy-client.ts) — not a counter KairosFlow
+    // health check (see app/lib/alloy-client.ts) — not a counter Custeio
     // maintains itself, so it can never drift from what Alloy actually enforces.
     // Absent until the first check ever runs.
     alloyRateLimitLimit: { type: Number },

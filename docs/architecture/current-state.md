@@ -68,7 +68,7 @@ Jobs registrados hoje (`app/jobs/registry.ts`): `users.export.csv`, `organizatio
    captura por upload funciona (só a SEFAZ ao vivo falta).
 4. **[`CLAUDE.md`](../../CLAUDE.md)** listava os 4 jobs como "papéis" sem distinguir os que existem.
    Atualizado nesta mesma mudança.
-5. **Nomes herdados:** banco/usuário Mongo `kairosflow`.
+5. **Nomes herdados:** banco/usuário Mongo `custeio`.
 
 ## Lacunas para a nova visão
 

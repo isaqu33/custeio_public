@@ -12,14 +12,14 @@ export async function createAndEnqueueJob<K extends JobKind>(
     kind,
     payload,
     organizationId,
-    examId,
+    reference,
     config,
     type,
   }: {
     kind: K;
     payload: JobPayloadByKind[K];
     organizationId: string;
-    examId: string;
+    reference: string;
     config?: JobConfig;
     type?: string;
   },
@@ -28,7 +28,7 @@ export async function createAndEnqueueJob<K extends JobKind>(
   await connectDB();
 
   const jobDoc = await JobsDB.findOneAndUpdate(
-    { examId, organizationId: new mongoose.Types.ObjectId(organizationId) },
+    { reference, organizationId: new mongoose.Types.ObjectId(organizationId) },
     {
       $set: {
         kind,
@@ -50,7 +50,7 @@ export async function createAndEnqueueJob<K extends JobKind>(
         type: type ?? 'Gateway',
       },
       $setOnInsert: {
-        examId,
+        reference,
         organizationId: new mongoose.Types.ObjectId(organizationId),
         params: { payloadOriginal: payload },
       },

@@ -69,18 +69,6 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // The embeddable widget must load on external customer sites that carry no
-  // session cookie: the loader script (`/chat-widget.js`) and the iframe page
-  // (`/chat-widget`) are intentionally public. They are NOT auth-gated at the
-  // HTTP layer by design — the page self-gates in React (renders "unavailable"
-  // unless embedded and handed a valid config via postMessage), embedding is
-  // constrained by the `frame-ancestors` CSP, and the chat data itself is behind
-  // the token-authed `/api/chat-widget/*` routes. The route matcher excludes
-  // image extensions but not `.js`, so without this these would 307 → /login.
-  if (path === '/chat-widget' || path === '/chat-widget.js') {
-    return NextResponse.next();
-  }
-
   if (path.startsWith('/api')) {
     if (
       mutatingMethods.has(request.method) &&

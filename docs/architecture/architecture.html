@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>KairosFlow — Architecture</title>
+    <title>Custeio — Architecture</title>
     <style>
       @page {
         size: A4 landscape;
@@ -436,7 +436,7 @@
     <section class="page">
       <header class="page-head">
         <div>
-          <div class="kicker">KairosFlow · Architecture · 1 of 5</div>
+          <div class="kicker">Custeio · Architecture · 1 of 5</div>
           <h1>Topology: what runs where</h1>
           <p class="sub">
             One Docker image starts in three roles, chosen by <code>APP_LOAD_*</code> flags. Mongo
@@ -474,7 +474,7 @@
                 <span class="tag">Messaging</span>
                 <h4>WhatsApp (Meta Cloud API)</h4>
                 <p>
-                  One KairosFlow number; each message is routed by
+                  One Custeio number; each message is routed by
                   <code>Stores.whatsappNumber</code>.
                 </p>
               </div>
@@ -497,7 +497,7 @@
             <div class="legend">One image, three roles (<code>APP_LOAD_*</code>)</div>
             <div class="row">
               <div class="node blue grow">
-                <span class="tag">container · kairosflow-web</span>
+                <span class="tag">container · custeio-web</span>
                 <h4>Web — UI + admin API</h4>
                 <p>
                   Next.js 16. <code>APP_LOAD_UI</code> and <code>APP_LOAD_ADMIN_API</code> on.
@@ -506,7 +506,7 @@
                 </p>
               </div>
               <div class="node blue grow dashed">
-                <span class="tag">container · kairosflow-ingestion-api</span>
+                <span class="tag">container · custeio-ingestion-api</span>
                 <h4>Ingestion — webhooks</h4>
                 <p>
                   Same image, UI off. It exists in the production compose file, but
@@ -515,7 +515,7 @@
                 </p>
               </div>
               <div class="node blue grow">
-                <span class="tag">container · kairosflow-worker</span>
+                <span class="tag">container · custeio-worker</span>
                 <h4>Worker — Bull consumer</h4>
                 <p>
                   <code>APP_LOAD_JOBS</code>: runs <code>scripts/worker.ts</code>, concurrency
@@ -542,7 +542,7 @@
 
           <div class="row">
             <div class="node violet grow">
-              <span class="tag">container · mongo-kairosflow</span>
+              <span class="tag">container · mongo-custeio</span>
               <h4>MongoDB 6</h4>
               <p>
                 State for everything: Organizations, Stores, domain data, Jobs, AuditEvents,
@@ -550,11 +550,11 @@
               </p>
             </div>
             <div class="node violet grow">
-              <span class="tag">container · redis-kairosflow</span>
+              <span class="tag">container · redis-custeio</span>
               <h4>Redis</h4>
               <p>
-                Coordination, not storage. The <code>custeio-jobs</code> queue, rate-limit
-                counters, liveness.
+                Coordination, not storage. The <code>custeio-jobs</code> queue, rate-limit counters,
+                liveness.
               </p>
             </div>
             <div class="node violet grow">
@@ -569,12 +569,12 @@
 
           <div class="note">
             <b>Callout (webhooks).</b> Role-based routing (<code>classifyRuntimeRoute</code>) only
-            recognizes <code>/api/v1/*</code> as “ingestion” — a prefix kept from the boilerplate, with
-            no routes today. The Alloy and Meta webhooks need a prefix classified as ingestion, or
-            they fall into the admin API. They carry no session cookie and no <code>Origin</code>,
-            so they get past the CSRF check in <code>proxy.ts</code> (it only applies to requests
-            with a cookie), but each needs its own authentication: the provider's secret/signature,
-            never a session.
+            recognizes <code>/api/v1/*</code> as “ingestion” — a prefix kept from the boilerplate,
+            with no routes today. The Alloy and Meta webhooks need a prefix classified as ingestion,
+            or they fall into the admin API. They carry no session cookie and no
+            <code>Origin</code>, so they get past the CSRF check in <code>proxy.ts</code> (it only
+            applies to requests with a cookie), but each needs its own authentication: the
+            provider's secret/signature, never a session.
           </div>
         </div>
       </div>
@@ -584,7 +584,7 @@
           >Sources: docker-compose.prod.yml · app/lib/runtime-roles.ts · scripts/entrypoint.ts ·
           proxy.ts</span
         >
-        <span>KairosFlow — generated from docs/architecture/architecture.html</span>
+        <span>Custeio — generated from docs/architecture/architecture.html</span>
       </footer>
     </section>
 
@@ -592,7 +592,7 @@
     <section class="page">
       <header class="page-head">
         <div>
-          <div class="kicker">KairosFlow · Architecture · 2 of 5</div>
+          <div class="kicker">Custeio · Architecture · 2 of 5</div>
           <h1>What lives where — and what happens if it goes down</h1>
           <p class="sub">
             Rule: nothing that cannot be rebuilt lives only in Redis. The job document is in Mongo;
@@ -612,9 +612,7 @@
             </tr>
             <tr>
               <td><b>Bull queue</b> <code>custeio-jobs</code></td>
-              <td>
-                Payload <code>{ jobId }</code>; the job document lives in Mongo.
-              </td>
+              <td>Payload <code>{ jobId }</code>; the job document lives in Mongo.</td>
               <td>No enqueueing or consuming. Jobs already written to Mongo are not lost.</td>
             </tr>
             <tr>
@@ -721,7 +719,7 @@
 
       <footer class="page-foot">
         <span>Sources: app/lib/bull/queue.ts · app/lib/rate-limit.ts · app/models/*</span>
-        <span>KairosFlow</span>
+        <span>Custeio</span>
       </footer>
     </section>
 
@@ -729,7 +727,7 @@
     <section class="page">
       <header class="page-head">
         <div>
-          <div class="kicker">KairosFlow · Architecture · 3 of 5</div>
+          <div class="kicker">Custeio · Architecture · 3 of 5</div>
           <h1>The jobs: two exist, four are the product</h1>
           <p class="sub">
             Every asynchronous execution is a row in <code>jobs</code> + a Bull entry. Adding a kind
@@ -859,7 +857,7 @@
           >Sources: docs/features/{jobs, alloy-api, sefaz-nfe, whatsapp-quick-query,
           stock-and-cmv}.md · app/jobs/registry.ts</span
         >
-        <span>KairosFlow</span>
+        <span>Custeio</span>
       </footer>
     </section>
 
@@ -867,7 +865,7 @@
     <section class="page">
       <header class="page-head">
         <div>
-          <div class="kicker">KairosFlow · Architecture · 4 of 5</div>
+          <div class="kicker">Custeio · Architecture · 4 of 5</div>
           <h1>Data flow: a purchase credits, a sale debits</h1>
           <p class="sub">
             The heart of the product. Two halves that meet in <code>RawIngredients</code>: the
@@ -983,7 +981,7 @@
           >Source: docs/features/stock-and-cmv.md (design of 2026-09-18; neither job
           implemented)</span
         >
-        <span>KairosFlow</span>
+        <span>Custeio</span>
       </footer>
     </section>
 
@@ -991,7 +989,7 @@
     <section class="page">
       <header class="page-head">
         <div>
-          <div class="kicker">KairosFlow · Architecture · 5 of 5</div>
+          <div class="kicker">Custeio · Architecture · 5 of 5</div>
           <h1>Multi-tenancy, secrets and limits</h1>
           <p class="sub">
             Cliente → Loja → domain data. Each credential lives where its natural scope lives.
@@ -1122,7 +1120,7 @@
       </div>
 
       <div class="note">
-        <b>WhatsApp API.</b> KairosFlow uses the official Meta Cloud API, not Evolution API (which
+        <b>WhatsApp API.</b> Custeio uses the official Meta Cloud API, not Evolution API (which
         reverse-engineers the WhatsApp Web protocol and can get the owner's number banned). Decided
         in <code>docs/features/whatsapp-quick-query.md</code>; <code>CLAUDE.md</code> says the same.
       </div>
@@ -1132,7 +1130,7 @@
           >Sources: app/lib/secret-encryption.ts · docs/features/{stores, sefaz-nfe, alloy-api,
           whatsapp-quick-query}.md</span
         >
-        <span>KairosFlow</span>
+        <span>Custeio</span>
       </footer>
     </section>
   </body>

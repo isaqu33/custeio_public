@@ -6,8 +6,8 @@
 # has restored is a hypothesis. Overwriting production is possible, but you have to
 # say so out loud.
 #
-#   ./scripts/ops/restore-mongo.sh backups/kairosflow-20260825.archive.gz --yes
-#   ./scripts/ops/restore-mongo.sh backups/kairosflow-20260825.archive.gz --db kairosflow --yes
+#   ./scripts/ops/restore-mongo.sh backups/custeio-20260825.archive.gz --yes
+#   ./scripts/ops/restore-mongo.sh backups/custeio-20260825.archive.gz --db custeio --yes
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."
@@ -16,7 +16,7 @@ cd "$(dirname "$0")/../.."
 ARCHIVE="${1:-}"
 shift || true
 
-SOURCE_DB="${MONGO_DB_NAME:-kairosflow}"
+SOURCE_DB="${MONGO_DB_NAME:-custeio}"
 TARGET_DB="${SOURCE_DB}_restore_check"
 CONFIRMED=0
 MONGO_CONTAINER="${MONGO_CONTAINER:-mongo-custeio}"

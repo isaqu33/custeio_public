@@ -16,7 +16,7 @@ import { ClipboardList } from 'lucide-react';
 import { DataTableAuditEvents } from '@/components/table-audit-events';
 import { redirect } from 'next/navigation';
 
-// Same default window as the sibling worklist: an audit log grows without bound,
+// Default window: an audit log grows without bound,
 // so an unfiltered first load would scan everything the tenant ever did.
 const AUDIT_EVENTS_DEFAULT_DAYS = 15;
 
@@ -49,7 +49,7 @@ export default async function AuditEventsPage(props: AppPageProps) {
 
   // Organization is NOT one of this page's filters — it comes from the
   // organization scope bar in the page header (OrganizationWorkspaceFrame),
-  // the same way the worklist does it. Absent means every organization the
+  // Absent means every organization the
   // session may see.
   const organizationId = getSearchParamString(searchParams, 'organizationId', 'all');
 

@@ -134,7 +134,7 @@ describe('organization users listing', () => {
       {
         _id: USER_B,
         name: 'Support',
-        email: 'support@kairosflow.example',
+        email: 'support@custeio.example',
         systemLevel: ['support'],
       },
     ]);

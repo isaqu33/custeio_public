@@ -17,7 +17,7 @@ describe('UI density', () => {
   });
 
   it('applies persisted compact density on mount', () => {
-    window.localStorage.setItem('rayai-ui-density', 'compact');
+    window.localStorage.setItem('custeio-ui-density', 'compact');
 
     render(<UiDensityProvider />);
 
@@ -35,18 +35,18 @@ describe('UI density', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Compact Mode' }));
 
-    expect(window.localStorage.getItem('rayai-ui-density')).toBe('compact');
+    expect(window.localStorage.getItem('custeio-ui-density')).toBe('compact');
     expect(document.documentElement).toHaveClass('compact');
     expect(screen.getByRole('button', { name: 'Comfortable Mode' })).toBeVisible();
 
     fireEvent.click(screen.getByRole('button', { name: 'Comfortable Mode' }));
 
-    expect(window.localStorage.getItem('rayai-ui-density')).toBe('comfortable');
+    expect(window.localStorage.getItem('custeio-ui-density')).toBe('comfortable');
     expect(document.documentElement).not.toHaveClass('compact');
   });
 
   it('ignores an unrecognized stored value and stays comfortable', () => {
-    window.localStorage.setItem('rayai-ui-density', 'cozy');
+    window.localStorage.setItem('custeio-ui-density', 'cozy');
 
     render(<UiDensityProvider />);
 

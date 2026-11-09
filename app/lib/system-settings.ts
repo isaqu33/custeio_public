@@ -1,5 +1,4 @@
-// KairosFlow's brand is fixed — unlike the RayAI boilerplate this was forked
-// from, there is no per-install white-labeling, so there is no admin screen
+// Custeio's brand is fixed: there is no per-install white-labeling, so there is no admin screen
 // (nor a database-backed override) for it either. Primary is the brand teal
 // (matches the logo's connectors); secondary/accent are its pale tints for
 // hover and subtle fills. Consumed directly by the auth and protected layouts

@@ -17,7 +17,6 @@ export async function appendJobLog(
       $push: {
         logs: {
           jobStatus: 'running',
-          examStatus: 'running',
           message: entry.message,
           step: entry.step,
           timestamp: new Date(),

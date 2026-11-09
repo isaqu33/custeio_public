@@ -25,7 +25,7 @@ export const POST = withObservability<{}>(AppFeature.RAW_INGREDIENTS_AI_REVIEW, 
   const created = await createAndEnqueueJob({
     kind: 'ai.ingredients.review',
     organizationId,
-    examId: `INGREDIENTS-AI-REVIEW-${storeId}-${Date.now()}`,
+    reference: `INGREDIENTS-AI-REVIEW-${storeId}-${Date.now()}`,
     type: 'AdHoc',
     payload: { requestedByUserId: sessionWithUser.user.id, storeId, force },
   });

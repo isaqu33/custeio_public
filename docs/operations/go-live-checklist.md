@@ -9,7 +9,7 @@ moving from the controlled pilot to real paying clients.
 
 ## Operational readiness (technical, already investigated)
 
-- [ ] **Backup**: prove the restore against the current `kairosflow` database at least once — the
+- [ ] **Backup**: prove the restore against the current `custeio` database at least once — the
       restore has not been proven against the current schema. See [backup.md](./backup.md).
 - [ ] **Stopped worker/queue alert**: today it **does not exist**. Without it, a dead worker is only discovered
       when a client complains. It has to exist before the domain jobs (`pos.order.received`,

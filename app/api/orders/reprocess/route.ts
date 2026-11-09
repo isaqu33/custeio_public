@@ -43,7 +43,7 @@ export const POST = withObservability<{}>(AppFeature.ORDERS_REPROCESS, async (re
   const created = await createAndEnqueueJob({
     kind: 'pos.orders.reprocess',
     organizationId,
-    examId: `ORDERS-REPROCESS-${storeId}-${Date.now()}`,
+    reference: `ORDERS-REPROCESS-${storeId}-${Date.now()}`,
     type: 'AdHoc',
     payload: { requestedByUserId: sessionWithUser.user.id, storeId },
   });

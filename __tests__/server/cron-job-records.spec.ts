@@ -45,7 +45,7 @@ describe('beginCronRunRecord', () => {
       queue: { provider: 'scheduler', queueName: 'crons' },
     });
     expect(doc).not.toHaveProperty('organizationId');
-    expect(doc.examId).toBe(`CRON-sefaz.auto-sync-${NOW.getTime()}`);
+    expect(doc.reference).toBe(`CRON-sefaz.auto-sync-${NOW.getTime()}`);
   });
 });
 

@@ -66,7 +66,7 @@ normalize_existing_env() {
   ensure_env "NODE_ENV" "development"
   ensure_env "APP_LOG_FORMAT" "pretty"
   ensure_env "APP_LOG_LEVEL" "info"
-  ensure_env "APP_SERVICE_NAME" "kairosflow"
+  ensure_env "APP_SERVICE_NAME" "custeio"
   ensure_env "AUTH_SECRET" "$(openssl rand -hex 32)"
   ensure_env "APP_USER_EMAIL" "admin@admin.com"
   ensure_env "APP_USER_PASSWORD" "admin"

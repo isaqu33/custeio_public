@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Take a compressed dump of the KairosFlow database.
+# Take a compressed dump of the Custeio database.
 #
 # Every organization's stock, recipes and cost history live in MongoDB and
 # nowhere else. Losing the volume without one of these files is losing the
@@ -13,7 +13,7 @@
 #   MONGO_CONTAINER=mongo-custeio ./scripts/ops/backup-mongo.sh
 #
 # Restore drill (do this quarterly, not the day you need it):
-#   ./scripts/ops/restore-mongo.sh backups/<file>.gz --db kairosflow_restore_check --yes
+#   ./scripts/ops/restore-mongo.sh backups/<file>.gz --db custeio_restore_check --yes
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."
@@ -22,9 +22,9 @@ cd "$(dirname "$0")/../.."
 BACKUP_DIR="${BACKUP_DIR:-./backups}"
 BACKUP_KEEP="${BACKUP_KEEP:-14}"
 MONGO_CONTAINER="${MONGO_CONTAINER:-mongo-custeio}"
-DB_NAME="${MONGO_DB_NAME:-kairosflow}"
+DB_NAME="${MONGO_DB_NAME:-custeio}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-ARCHIVE="${BACKUP_DIR}/kairosflow-${STAMP}.archive.gz"
+ARCHIVE="${BACKUP_DIR}/custeio-${STAMP}.archive.gz"
 
 mkdir -p "$BACKUP_DIR"
 
@@ -68,7 +68,7 @@ echo "Wrote $(du -h "$ARCHIVE" | cut -f1) to $ARCHIVE"
 # Keep the last N. Deliberately simple: offsite copies and longer history are the
 # job of whatever syncs $BACKUP_DIR somewhere else — see docs/operations/backup.md.
 if [ "$BACKUP_KEEP" -gt 0 ]; then
-  ls -1t "${BACKUP_DIR}"/kairosflow-*.archive.gz 2>/dev/null | tail -n "+$((BACKUP_KEEP + 1))" | while read -r old; do
+  ls -1t "${BACKUP_DIR}"/custeio-*.archive.gz 2>/dev/null | tail -n "+$((BACKUP_KEEP + 1))" | while read -r old; do
     echo "Pruning $old"
     rm -f "$old"
   done

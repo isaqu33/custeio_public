@@ -27,10 +27,8 @@ export type OrganizationScopeOption = { id: string; name: string };
  * exactly what the dashboard, jobs and audit-events services already accept —
  * so choosing here filters all three without any per-page wiring.
  *
- * The sibling worklist's version is a *multi* selector (`organizationIds`, a
- * comma-separated list plus a `__none__` sentinel). Widening this to match means
- * teaching those three services to take a list; the single-or-all contract is
- * what they speak today.
+ * It is a single-or-all selector (one organization or all of them); that is the
+ * contract those services speak today.
  */
 export function OrganizationScopeSelector({ className }: { className?: string }) {
   const router = useRouter();

@@ -559,28 +559,6 @@ export const adminAction = z.object({
   userId: objectId,
 });
 
-export const localAppUpdate = z.object({
-  enabled: z.boolean(),
-  version: z.string().max(20).optional().default(''),
-  url: z.string().url().optional().default(''),
-  sha256: z
-    .string()
-    .regex(/^[a-f0-9]{64}$/i)
-    .optional()
-    .or(z.literal(''))
-    .default(''),
-  signature: z.string().optional().default(''),
-  required: z.boolean().optional().default(true),
-});
-
-// --- Exams ---
-
-export const getExams = pagination.merge(searchQuery).extend({
-  organizationId: z.string().optional(),
-  searchType: z.enum(['name', 'accession']).default('name'),
-  period: z.string().default('15'),
-});
-
 export const getJobs = pagination.extend({
   jobId: z.string().min(1, 'jobId is required'),
 });

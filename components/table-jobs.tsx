@@ -77,7 +77,7 @@ const REPORT_JOB_KINDS = SYSTEM_ONLY_JOB_KINDS;
 
 export type Job = {
   _id: string;
-  examId: string;
+  reference: string;
   organizationId: string;
   kind?: string;
   type: string;
@@ -127,7 +127,7 @@ export function DataTableJobs({
   // The URL owns the applied filters; this is the copy the user is editing.
   const { draft, setField } = useFilterDraft({
     textSearch: searchTerm || '',
-    selectedSearchType: searchType || 'examId',
+    selectedSearchType: searchType || 'reference',
     selectedKind: jobKind || 'all',
     fromDate: dateFrom || '',
     toDate: dateTo || '',
@@ -141,9 +141,9 @@ export function DataTableJobs({
 
   const columns: ColumnDef<Job>[] = [
     {
-      accessorKey: 'examId',
-      header: copy.jobs.columns.examId,
-      cell: ({ row }) => <span className="font-medium">{row.original.examId}</span>,
+      accessorKey: 'reference',
+      header: copy.jobs.columns.reference,
+      cell: ({ row }) => <span className="font-medium">{row.original.reference}</span>,
     },
     {
       accessorKey: 'kind',
@@ -189,9 +189,6 @@ export function DataTableJobs({
         const job = row.original;
         const isDone = job.status === 'done';
         const isReport = REPORT_JOB_KINDS.includes(job.kind ?? '');
-        // The detail view is the analysis pipeline (converting → analyzing →
-        // synthesizing). Showing it for a CSV export claimed the export had gone
-        // through DICOM conversion, which it never does.
         const canDownloadInline = isDone && isReport && Boolean(job.result?.csvBase64);
         const canDownloadFromBlob = isDone && isReport && Boolean(job.result?.blobPath);
         const isDownloading = downloadingId === job._id;
@@ -206,7 +203,7 @@ export function DataTableJobs({
               bytes[i] = binary.charCodeAt(i);
             }
             const blob = new Blob([bytes], { type: job.result.mimeType || 'text/csv' });
-            downloadBlob(blob, job.result.fileName || `${job.examId}.csv`);
+            downloadBlob(blob, job.result.fileName || `${job.reference}.csv`);
           } catch {
             showErrorToast();
           } finally {
@@ -225,7 +222,10 @@ export function DataTableJobs({
               method: 'GET',
               responseType: 'blob',
             });
-            downloadBlob(blob, job.result?.fileName?.replace(/\.gz$/i, '') || `${job.examId}.csv`);
+            downloadBlob(
+              blob,
+              job.result?.fileName?.replace(/\.gz$/i, '') || `${job.reference}.csv`,
+            );
           } catch {
             showErrorToast();
           } finally {
@@ -237,7 +237,7 @@ export function DataTableJobs({
         const onClick = canDownloadInline ? downloadInline : downloadFromBlob;
         return (
           <div className="flex items-center justify-center gap-2">
-            <JobDetailModal jobId={job._id} examId={job.examId} />
+            <JobDetailModal jobId={job._id} reference={job.reference} />
             {showDownload && (
               <Button
                 variant="ghost"
@@ -279,7 +279,7 @@ export function DataTableJobs({
 
   // Values must match JOB_SEARCH_FIELDS in the jobs service.
   const searchTypeOptions = [
-    { value: 'examId', label: copy.jobs.columns.examId },
+    { value: 'reference', label: copy.jobs.columns.reference },
     { value: 'kind', label: copy.jobs.columns.kind },
     { value: 'status', label: copy.jobs.columns.status },
     { value: 'type', label: copy.jobs.filters.type },
@@ -335,8 +335,8 @@ export function DataTableJobs({
               <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 {copy.jobs.filters.searchLabel}
               </Label>
-              {/* Field picker glued to the input, like the worklist: searching
-                  "done" across every field matches a status AND any exam id that
+              {/* Field picker glued to the input: searching
+                  "done" across every field matches a status AND any reference that
                   happens to contain it. */}
               <div className="flex flex-col gap-2 sm:flex-row sm:gap-0">
                 <Select
@@ -363,7 +363,7 @@ export function DataTableJobs({
                   placeholder={formatCopy(copy.jobs.filters.searchBy, {
                     field:
                       searchTypeOptions.find((option) => option.value === selectedSearchType)
-                        ?.label ?? copy.jobs.columns.examId,
+                        ?.label ?? copy.jobs.columns.reference,
                   })}
                   className="w-full min-w-0 sm:flex-1"
                 />

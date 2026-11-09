@@ -18,9 +18,8 @@ import { useCopy } from '@/app/lib/i18n/client';
 import { cn } from '@/app/lib/utils';
 import { Button } from './button';
 
-// Ported verbatim from the sibling worklist so the two products use the same
-// glyph for the same action. Add an entry here rather than importing a Lucide
-// icon at a call site — that is how the apps drifted apart in the first place.
+// One glyph per action across the app. Add an entry here rather than importing a
+// Lucide icon at a call site, so the same action never gets two different icons.
 const actionConfig = {
   add: { copyKey: 'add', Icon: Plus },
   create: { copyKey: 'create', Icon: Plus },

@@ -21,7 +21,7 @@ export async function beginCronRunRecord(key: CronKey, now: Date): Promise<CronR
     kind,
     handler: kind,
     type: 'Cron',
-    examId: `CRON-${key}-${now.getTime()}`,
+    reference: `CRON-${key}-${now.getTime()}`,
     status: 'running',
     payload: { cron: key },
     queue: { provider: 'scheduler', queueName: 'crons' },

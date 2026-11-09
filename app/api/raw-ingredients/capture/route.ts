@@ -33,11 +33,11 @@ export const POST = withObservability<{}>(AppFeature.RAW_INGREDIENTS_CAPTURE_NFE
   if (!organizationId) throw new NotFoundError('Store not found.');
   await requireOrganizationAccess(session, organizationId);
 
-  const examId = `NFE-CAPTURE-${storeId}-${Date.now()}`;
+  const reference = `NFE-CAPTURE-${storeId}-${Date.now()}`;
   const created = await createAndEnqueueJob({
     kind: 'sefaz.nfe.received',
     organizationId,
-    examId,
+    reference,
     type: 'AdHoc',
     config: captureConfig,
     payload: {

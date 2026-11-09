@@ -4,7 +4,7 @@ export type JobStatus = 'queued' | 'running' | 'done' | 'failed' | 'canceled';
 
 export type JobListItem = {
   _id: string;
-  examId: string;
+  reference: string;
   organizationId: string;
   kind?: string;
   type: string;
@@ -92,7 +92,7 @@ export type JobErrorLog = {
 
 export type JobDetail = {
   _id: string;
-  examId: string;
+  reference: string;
   // Ties this job to the HTTP request that created it: the route puts its
   // requestId here and the worker logs every line under the same value, so
   // support can go from a job on screen to its logs.

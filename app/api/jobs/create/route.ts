@@ -42,17 +42,17 @@ export const POST = withObservability<{}>(AppFeature.JOBS_CREATE, async (req, _c
   if (!firstOrganizationId) {
     throw new BadRequestError('No authorized organization available.');
   }
-  const examIdPrefix = {
+  const referencePrefix = {
     'users.export.csv': 'ADHOC-USERS-EXPORT',
     'organizations.export.csv': 'ADHOC-ORGANIZATIONS-EXPORT',
   }[input.kind];
-  const examId = `${examIdPrefix}-${Date.now()}`;
+  const reference = `${referencePrefix}-${Date.now()}`;
 
   const created = await createAndEnqueueJob(
     {
       kind: input.kind,
       organizationId: firstOrganizationId,
-      examId,
+      reference,
       type: 'AdHoc',
       config: adhocConfig,
       payload: {

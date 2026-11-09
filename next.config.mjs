@@ -47,9 +47,7 @@ const nextConfig = {
   turbopack: {
     root: projectRoot,
   },
-  // Hide the floating Next.js dev-tools/Turbopack indicator. It's a dev-only
-  // overlay (never present in production) but it floats over the bare chat widget
-  // iframe during local testing. Global — Next has no per-route control for it.
+  // Hide the floating Next.js dev-tools/Turbopack indicator (dev-only overlay).
   devIndicators: false,
   // Don't try to bundle bull's native modules server-side.
   serverExternalPackages: ['bull'],
@@ -76,25 +74,7 @@ const nextConfig = {
       });
     }
 
-    // The embeddable chat widget (`/chat-widget`) is the ONE route meant to be
-    // framed. The global `frame-ancestors 'none'` + `X-Frame-Options: DENY` would
-    // block it everywhere (even our own same-origin test viewer), so it gets its
-    // own relaxed policy: secure-by-default `'self'`, plus any operator-configured
-    // customer origins from APP_WIDGET_FRAME_ANCESTORS (space-separated). We DROP
-    // X-Frame-Options here because it can't express a multi-origin allowlist —
-    // modern browsers honor CSP frame-ancestors instead.
-    const widgetAncestors = (process.env.APP_WIDGET_FRAME_ANCESTORS ?? '').trim();
-    const frameAncestors = widgetAncestors ? `'self' ${widgetAncestors}` : "'self'";
-    const widgetCsp = csp.replace("frame-ancestors 'none'", `frame-ancestors ${frameAncestors}`);
-    const widgetHeaders = baseHeaders
-      .filter((h) => h.key !== 'X-Frame-Options' && h.key !== 'Content-Security-Policy')
-      .concat({ key: 'Content-Security-Policy', value: widgetCsp });
-
-    return [
-      // Exclude /chat-widget from the global deny so its dedicated rule wins.
-      { source: '/((?!chat-widget).*)', headers: baseHeaders },
-      { source: '/chat-widget', headers: widgetHeaders },
-    ];
+    return [{ source: '/(.*)', headers: baseHeaders }];
   },
 };
 

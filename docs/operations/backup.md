@@ -7,7 +7,7 @@ the minimum that prevents it.
 ## Taking one
 
 ```bash
-npm run ops:backup                      # writes ./backups/kairosflow-<stamp>.archive.gz
+npm run ops:backup                      # writes ./backups/custeio-<stamp>.archive.gz
 BACKUP_DIR=/mnt/backups npm run ops:backup
 ```
 
@@ -21,16 +21,16 @@ deleted and the script fails: a truncated dump that looks like a backup is worse
 ## Proving one
 
 A backup that was never restored is a hypothesis. The restore, by default, goes to a **side
-database** (`kairosflow_restore_check`), so the test is safe to run against production:
+database** (`custeio_restore_check`), so the test is safe to run against production:
 
 ```bash
-npm run ops:restore -- backups/kairosflow-20260919-114213.archive.gz --yes
+npm run ops:restore -- backups/custeio-20260919-114213.archive.gz --yes
 ```
 
-That lands in `kairosflow_restore_check`. Compare against the live database before trusting it —
+That lands in `custeio_restore_check`. Compare against the live database before trusting it —
 the script prints the exact command, which shows the document count per collection side by side.
 
-To restore over the live database, name it explicitly: `--db kairosflow --yes`. The script warns
+To restore over the live database, name it explicitly: `--db custeio --yes`. The script warns
 loudly that the archive's collections are dropped first.
 
 **Not yet verified since the pivot to the Custeio domain.** The last time this process was
@@ -44,7 +44,7 @@ least once before trusting this with real client data is the most concrete item 
 There is no scheduler inside the application; use the host's. On the Docker host:
 
 ```cron
-17 3 * * *  cd /opt/kairosflow && BACKUP_DIR=/mnt/backups ./scripts/ops/backup-mongo.sh >> /var/log/kairosflow-backup.log 2>&1
+17 3 * * *  cd /opt/custeio && BACKUP_DIR=/mnt/backups ./scripts/ops/backup-mongo.sh >> /var/log/custeio-backup.log 2>&1
 ```
 
 Then **copy `$BACKUP_DIR` off that machine** — to Azure Blob, another host, anywhere that does not

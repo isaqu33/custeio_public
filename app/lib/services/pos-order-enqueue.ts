@@ -17,7 +17,7 @@ export async function enqueuePosOrderReceived(input: {
     await createAndEnqueueJob({
       kind: 'pos.order.received',
       organizationId,
-      examId: `POS-EVENT-${input.eventId}`,
+      reference: `POS-EVENT-${input.eventId}`,
       type: 'Gateway',
       payload: { storeId: input.storeId, eventId: input.eventId },
     });

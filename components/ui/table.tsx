@@ -49,7 +49,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
       ref={ref}
       className={cn(
         // Brand-tinted hover (--accent is the pale teal tint, see globals.css)
-        // instead of a neutral gray wash — one more place the KairosFlow
+        // instead of a neutral gray wash — one more place the Custeio
         // palette shows up rather than reading as generic admin-template gray.
         'border-b transition-colors hover:bg-accent/60 data-[state=selected]:bg-accent',
         className,

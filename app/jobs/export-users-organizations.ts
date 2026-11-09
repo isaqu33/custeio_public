@@ -26,8 +26,7 @@ function organizationNamesOf(user: { organizationIds?: unknown }): string {
  * The accounts CSV: who exists, where they belong, and whether they actually use
  * the system.
  *
- * There was briefly a second job for the activity view (the sibling worklist has
- * one), but it produced the same rows for the same population — the only real
+ * There was briefly a second job for the activity view, but it produced the same rows for the same population — the only real
  * difference was two columns. Those columns live here instead, so there is one
  * account report rather than two that drift apart.
  */

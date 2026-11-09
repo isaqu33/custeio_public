@@ -45,7 +45,7 @@ export default function LoadingJobs() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Exam ID</TableHead>
+                  <TableHead>Reference</TableHead>
                   <TableHead>Kind</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created At</TableHead>

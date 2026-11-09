@@ -512,7 +512,7 @@ export const enUS = {
     },
     jobs: {
       columns: {
-        examId: 'Reference',
+        reference: 'Reference',
         kind: 'Kind',
         status: 'Status',
         createdAt: 'Created at',
@@ -1496,7 +1496,7 @@ export const enUS = {
   },
   jobs: {
     columns: {
-      examId: 'Reference',
+      reference: 'Reference',
       kind: 'Kind',
       status: 'Status',
       createdAt: 'Created At',
@@ -1539,7 +1539,7 @@ export const enUS = {
     },
     detail: {
       view: 'View job',
-      title: 'Job {examId}',
+      title: 'Job {reference}',
       description: 'Progress, steps and result of the job.',
       loading: 'Loading job...',
       loadFailed: 'Failed to load job.',

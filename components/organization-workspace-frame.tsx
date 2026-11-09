@@ -9,22 +9,15 @@ import { OrganizationScopeSelector } from '@/components/organization-scope-selec
 // platform do not, because a selector that filters nothing is a lie about what
 // the page shows.
 //
-// Some System pages are in the list, and each belongs: `/system/spend` reports
-// per-organization spend, `/system/modalities` sets a per-organization exam
-// scope, and `/system/users` narrows its list to one organization's members, so
-// "which organization" is exactly the question the selector answers on each.
-// Their ACCESS is still System-only — that is decided by the route group and the
-// feature registry, not by this bar.
+// Some System pages are in the list, and each belongs: `/system/users` narrows its list to
+// one organization's members, so "which organization" is exactly the question the selector
+// answers there. Their ACCESS is still System-only — that is decided by the route group and
+// the feature registry, not by this bar.
 const ORGANIZATION_WORKSPACE_PATHS = new Set([
-  '/system/spend',
-  '/system/modalities',
   '/system/audit-events',
   '/system/users',
   '/system/jobs',
-  '/organization/analyses',
   '/organization/dashboard',
-  '/organization/new-analysis',
-  '/organization/widget',
   '/organization/stock',
   '/organization/preparations',
   '/organization/invoices',
