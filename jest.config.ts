@@ -16,6 +16,8 @@ const config: Config = {
     '/build/',
     '/.claude/',
     '/e2e/',
+    // Needs Docker: run with `npm run test:int`.
+    '/__tests__/integration/',
     '/_archive/',
     // AppleDouble sidecar files (this repo lives on an exFAT/HFS+ external
     // drive, which grows a `._foo.spec.ts` next to `foo.spec.ts` on every

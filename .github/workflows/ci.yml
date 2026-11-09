@@ -56,6 +56,27 @@ jobs:
       - name: Build
         run: npm run build
 
+  integration:
+    name: Integration (real MongoDB)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Testcontainers starts its own throwaway MongoDB through the runner's Docker.
+      - name: Integration tests
+        run: npm run test:int
+
   e2e-full:
     name: E2E (manual)
     if: github.event_name == 'workflow_dispatch'
