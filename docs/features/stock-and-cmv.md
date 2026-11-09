@@ -1,7 +1,7 @@
 # Fractional stock deduction + real CMV
 
 How a purchase (NFe) credits stock and how a sale (Alloy) debits it — step 3 of the pipeline
-described in [`CLAUDE.md`](../../CLAUDE.md): "deducts fractionally based on the products' recipes
+described in `CLAUDE.md`: "deducts fractionally based on the products' recipes
 (including add-ons)". This document covers the logic of `sefaz.nfe.received` (the half that
 credits) and `pos.order.received` (the half that debits and calculates the real CMV).
 

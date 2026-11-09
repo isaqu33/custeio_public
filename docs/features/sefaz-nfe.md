@@ -3,7 +3,7 @@
 Technical mapping of the national DF-e Distribution webservice, used to capture the **purchase
 invoices** (the ingredient arrives, the supplier issues the NFe against the client's CNPJ) that
 feed `RawIngredients` and the weighted average cost. Reference for implementing the
-`sefaz.nfe.received` job described in [`CLAUDE.md`](../../CLAUDE.md).
+`sefaz.nfe.received` job described in `CLAUDE.md`.
 
 > Researched on 2026-09-18 from public documentation (Technical Note 2014.002, Contributor
 > Integration Manual 4.01, and open-source reference libraries such as `sped-nfe`/nfephp and

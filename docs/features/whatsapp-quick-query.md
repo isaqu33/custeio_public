@@ -1,6 +1,6 @@
 # WhatsApp — quick query and alerts
 
-Technical mapping of step 4 of the pipeline described in [`CLAUDE.md`](../../CLAUDE.md): quick
+Technical mapping of step 4 of the pipeline described in `CLAUDE.md`: quick
 queries over WhatsApp (Meta's official API) so the owner can check stock and margin without
 opening a dashboard. Reference for implementing the `whatsapp.message.incoming` job.
 

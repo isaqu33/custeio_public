@@ -20,7 +20,7 @@
 8. **Trust over fake precision.** Mostrar incerteza quando os dados não bastam; nunca fingir
    precisão.
 
-Somam-se aos guardrails de trabalho do [`CLAUDE.md`](../../CLAUDE.md) (passo a passo, sem
+Somam-se aos guardrails de trabalho do `CLAUDE.md` (passo a passo, sem
 over-engineering, MVP de baixo custo operacional).
 
 ## Interface: dashboard vs. WhatsApp

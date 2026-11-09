@@ -18,7 +18,7 @@ same change:
 3. Add unit tests for business rules and client behavior.
 4. Add stable `data-e2e-id` selectors for workflow-critical buttons/forms.
 5. Add or update e2e coverage for the main action path when the feature affects real workflows.
-6. Follow the conventions in [`CLAUDE.md`](../../CLAUDE.md): `apiFetch` for client calls, typed
+6. Follow the conventions in `CLAUDE.md`: `apiFetch` for client calls, typed
    errors from `app/lib/errors.ts` inside `withObservability` routes, `requireOrganizationAccess`
    on organization-scoped routes (and every domain query scoped by `organizationId`/`storeId`),
    zod schemas for validation, and localization dictionaries for user-facing copy.

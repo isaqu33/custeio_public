@@ -15,7 +15,7 @@ chat webhook when the worker dies or the queue chokes.
 The sentence that used to be here still holds, and has become true again: **a worker that dies at
 2 a.m. is only discovered when a client complains** — because today nothing watches whether
 `pos.order.received`/`sefaz.nfe.received`/`whatsapp.message.incoming` (none of the three
-implemented yet, see [`CLAUDE.md`](../../CLAUDE.md)) are being processed or stuck in the queue.
+implemented yet, see `CLAUDE.md`) are being processed or stuck in the queue.
 
 ## What has to happen before these jobs go to production
 

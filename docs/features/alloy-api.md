@@ -3,7 +3,7 @@
 Mapping of the routes, authentication and webhooks of the Alloy (POS) API, gathered from the public
 help center and the Postman collections Alloy publishes. This document is the technical reference
 used to implement the `pos.catalog.sync` and `pos.order.received` jobs described in
-[`CLAUDE.md`](../../CLAUDE.md). See also [POS providers](./pos-providers.md) for the context on
+`CLAUDE.md`. See also [POS providers](./pos-providers.md) for the context on
 why only Alloy is confirmed as integrable today.
 
 > Researched on 2026-09-17 from public documentation + validated against the real account the same

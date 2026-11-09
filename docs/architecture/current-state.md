@@ -66,7 +66,7 @@ Jobs registrados hoje (`app/jobs/registry.ts`): `users.export.csv`, `organizatio
    implementado". Metade (crédito por compra) já roda; falta a metade que debita por venda.
 3. **[`README.md`](../../README.md)** (raiz) descrevia leitura de NF-e como "em construção"; hoje a
    captura por upload funciona (só a SEFAZ ao vivo falta).
-4. **[`CLAUDE.md`](../../CLAUDE.md)** listava os 4 jobs como "papéis" sem distinguir os que existem.
+4. **`CLAUDE.md`** listava os 4 jobs como "papéis" sem distinguir os que existem.
    Atualizado nesta mesma mudança.
 5. **Nomes herdados:** banco/usuário Mongo `custeio`.
 
