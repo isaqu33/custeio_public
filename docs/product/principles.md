@@ -36,14 +36,14 @@ O dono não deveria precisar abrir o dashboard todo dia.
 CAPTURAR → ENTENDER → CONFERIR → PREVER → RECOMENDAR → AGIR
 ```
 
-| Etapa      | Exemplos                                                                       |
-| ---------- | ------------------------------------------------------------------------------ |
-| CAPTURAR   | NF-e (XML/PDF/SEFAZ), webhook e catálogo do PDV, contagem de estoque           |
-| ENTENDER   | ficha técnica, custo médio, CMV, margem, precificação                          |
-| CONFERIR   | CMV teórico vs. real, divergências, estoque negativo, venda sem ficha          |
-| PREVER     | forecast de consumo por insumo, cobertura de estoque                           |
-| RECOMENDAR | quanto/quando comprar, com múltiplos e lead time do fornecedor                 |
-| AGIR       | alerta e consulta no WhatsApp, "ver cálculo"                                   |
+| Etapa      | Exemplos                                                              |
+| ---------- | --------------------------------------------------------------------- |
+| CAPTURAR   | NF-e (XML/PDF/SEFAZ), webhook e catálogo do PDV, contagem de estoque  |
+| ENTENDER   | ficha técnica, custo médio, CMV, margem, precificação                 |
+| CONFERIR   | CMV teórico vs. real, divergências, estoque negativo, venda sem ficha |
+| PREVER     | forecast de consumo por insumo, cobertura de estoque                  |
+| RECOMENDAR | quanto/quando comprar, com múltiplos e lead time do fornecedor        |
+| AGIR       | alerta e consulta no WhatsApp, "ver cálculo"                          |
 
 Ao propor uma feature, dizer em qual etapa ela cai e **de qual etapa anterior ela depende**. Uma
 feature de PREVER sem CAPTURAR/CONFERIR confiável por baixo é sinal de que a ordem está errada (ver
@@ -51,11 +51,11 @@ feature de PREVER sem CAPTURAR/CONFERIR confiável por baixo é sinal de que a o
 
 ## Classificação atual das capacidades
 
-| Capacidade                                  | Papel na visão                                   |
-| ------------------------------------------- | ------------------------------------------------ |
-| Captura de NF-e, De/Para, catálogo do PDV   | **Core** — CAPTURAR                              |
-| Ficha técnica, custo médio, CMV             | **Core** — ENTENDER                              |
-| Reconciliação, divergência, cobertura       | **Core** — CONFERIR / PREVER                     |
-| Recomendação de compra, WhatsApp            | **Core** — RECOMENDAR / AGIR                     |
-| **Precificação** (margem, preço sugerido)   | **Secundária/complementar** — continua no produto |
-| Multiempresa/multiloja, usuários, admin, jobs, auditoria, billing | Plataforma (habilitadora)  |
+| Capacidade                                                        | Papel na visão                                    |
+| ----------------------------------------------------------------- | ------------------------------------------------- |
+| Captura de NF-e, De/Para, catálogo do PDV                         | **Core** — CAPTURAR                               |
+| Ficha técnica, custo médio, CMV                                   | **Core** — ENTENDER                               |
+| Reconciliação, divergência, cobertura                             | **Core** — CONFERIR / PREVER                      |
+| Recomendação de compra, WhatsApp                                  | **Core** — RECOMENDAR / AGIR                      |
+| **Precificação** (margem, preço sugerido)                         | **Secundária/complementar** — continua no produto |
+| Multiempresa/multiloja, usuários, admin, jobs, auditoria, billing | Plataforma (habilitadora)                         |

@@ -5,10 +5,6 @@
 There is no queue watchdog yet: no worker heartbeat in Redis, no queue-depth alert and no push to a
 chat webhook when the worker dies or the queue chokes.
 
-- `APP_HEALTH_WORKER_SILENT_MS`, `APP_HEALTH_QUEUE_BACKLOG_MAX`, `APP_HEALTH_QUEUE_FAILED_MAX`,
-  `APP_ALERT_WEBHOOK_URL`, `APP_ALERT_REPEAT_MS` and `APP_PIPELINE_WATCHDOG_INTERVAL_MS` are still
-  declared in [`app/lib/env.ts`](../../app/lib/env.ts), but **have no consumer** — orphaned
-  configuration, the same situation we found in [retention.md](./retention.md).
 - What remains is only the generic container health check:
   [`/api/health`](../../app/api/health/route.ts), `/api/health/ready` (can it talk to Mongo/Redis?)
   and `/api/health/live`. None of them answers "are the jobs actually moving" — which is exactly

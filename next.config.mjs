@@ -24,13 +24,13 @@ const devAllowedOrigins = (process.env.APP_DEV_ALLOWED_ORIGINS ?? '')
 // on that buffer defaults to 10 MB — and past it Next does NOT fail the request: it
 // hands the handler the first 10 MB, which for a multipart upload is a body with no
 // closing boundary, so `formData()` throws and the caller gets an opaque 500. Every
-// upload route was affected (a study zip, a portal upload, a 25 MB chat attachment).
+// upload route was affected (an NF-e batch, for instance).
 //
 // It is deliberately the SAME number the application enforces, so the two limits
-// cannot disagree: raise APP_MAX_STUDY_ZIP_BYTES and this rises with it. Mind what
+// cannot disagree: raise APP_MAX_UPLOAD_BYTES and this rises with it. Mind what
 // it costs — this many bytes are held in memory per upload in flight, so it is a
 // ceiling on the web/ingestion container's memory, not just on file size.
-const maxUploadBytes = Number(process.env.APP_MAX_STUDY_ZIP_BYTES ?? 256 * 1024 * 1024);
+const maxUploadBytes = Number(process.env.APP_MAX_UPLOAD_BYTES ?? 25 * 1024 * 1024);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

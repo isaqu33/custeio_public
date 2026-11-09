@@ -68,7 +68,5 @@ language change.
 ## Coverage
 
 Every page under `app/(protected)` reads its copy from the dictionary (server pages through
-`getServerCopyForSession`, client components through `useCopy`). Keys inherited from RayAI for
-features that no longer exist were removed with them; the dictionary carries only copy for screens
-that are still in the app. The Playwright specs under `e2e/` still assert English labels and have
+`getServerCopyForSession`, client components through `useCopy`). The dictionary carries only copy for screens that are still in the app. The Playwright specs under `e2e/` still assert English labels and have
 not been adapted to the Portuguese default.

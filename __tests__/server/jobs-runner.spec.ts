@@ -7,7 +7,6 @@ const connectDBMock = jest.fn();
 const jobsFindByIdMock = jest.fn();
 const jobsUpdateOneMock = jest.fn();
 const handlerUsersMock = jest.fn();
-const sendFailureWebhookMock = jest.fn();
 
 jest.mock('@/app/lib/connect-db', () => ({ __esModule: true, default: connectDBMock }));
 jest.mock('@/app/models/jobs', () => ({
@@ -18,10 +17,6 @@ jest.mock('@/app/jobs/registry', () => ({
   jobRegistry: {
     'users.export.csv': handlerUsersMock,
   },
-}));
-jest.mock('@/app/lib/webhook', () => ({
-  sendFailureWebhook: sendFailureWebhookMock,
-  sendSuccessWebhook: jest.fn(),
 }));
 
 describe('jobs runner', () => {

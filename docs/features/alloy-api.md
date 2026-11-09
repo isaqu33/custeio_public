@@ -309,24 +309,57 @@ Resposta recebida: null". Deliveries come from changing AWS São Paulo IPs (seen
 
 ```json
 {
-  "evento": "alteracao_de_status", "modulo": "loja_delivery", "data": "2026-10-02",
-  "chave": "<chave>", "loja_id": 18424,
-  "pedido_ref": 1521, "novo_status": 3,
+  "evento": "alteracao_de_status",
+  "modulo": "loja_delivery",
+  "data": "2026-10-02",
+  "chave": "<chave>",
+  "loja_id": 18424,
+  "pedido_ref": 1521,
+  "novo_status": 3,
   "dados_pedido": {
-    "ref": 1521, "status": 3, "created_at": "2026-10-02 19:11:06",
-    "aceito_em": "...", "producao_em": "...", "transito_em": "...", "entregue_em": null,
-    "total": 50.4, "valor_entrega": 3, "valor_desconto": 0, "total_com_descontos": 53.4,
-    "delivery": 1, "retirada": 0, "consumo_no_local": 0, "id_provedor": null,
+    "ref": 1521,
+    "status": 3,
+    "created_at": "2026-10-02 19:11:06",
+    "aceito_em": "...",
+    "producao_em": "...",
+    "transito_em": "...",
+    "entregue_em": null,
+    "total": 50.4,
+    "valor_entrega": 3,
+    "valor_desconto": 0,
+    "total_com_descontos": 53.4,
+    "delivery": 1,
+    "retirada": 0,
+    "consumo_no_local": 0,
+    "id_provedor": null,
     "meio_de_pagamento": "Visa",
-    "itens": [{
-      "quantidade": 1, "valor": 15, "unidades": "1.000", "cod_pdv": "283",
-      "nome": "João Smash", "descricao": "Pão brioche, blend Angus smash 100g, ...",
-      "categoria": "Hambúrguer Artesanal",
-      "complementos": [
-        { "quantidade": 1, "valor": 0,   "cod_pdv": "575", "nome": "Ao Ponto",  "categoria": "Ponto da carne" },
-        { "quantidade": 1, "valor": 7.5, "cod_pdv": "152", "nome": "Fritas Extra (Saquinho)", "categoria": "Batata Frita Extra" }
-      ]
-    }]
+    "itens": [
+      {
+        "quantidade": 1,
+        "valor": 15,
+        "unidades": "1.000",
+        "cod_pdv": "283",
+        "nome": "João Smash",
+        "descricao": "Pão brioche, blend Angus smash 100g, ...",
+        "categoria": "Hambúrguer Artesanal",
+        "complementos": [
+          {
+            "quantidade": 1,
+            "valor": 0,
+            "cod_pdv": "575",
+            "nome": "Ao Ponto",
+            "categoria": "Ponto da carne"
+          },
+          {
+            "quantidade": 1,
+            "valor": 7.5,
+            "cod_pdv": "152",
+            "nome": "Fritas Extra (Saquinho)",
+            "categoria": "Batata Frita Extra"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -438,7 +471,7 @@ history is the "Eventos do PDV" page (`/system/pos-events`, in the System group)
   soda no one picks in the order.
 - **Money**: `total` is the items plus, for iFood, the marketplace fee (shown only in `obs`: "Taxa adicional
   iFood"); 99Food puts its fee in `valor_adicional`. `total_com_descontos = total − valor_desconto +
-  valor_entrega − valor_desconto_entrega`. "Incentivo iFood/99Food" in `meios_de_pagamento` is the
+valor_entrega − valor_desconto_entrega`. "Incentivo iFood/99Food" in `meios_de_pagamento` is the
   marketplace paying the coupon, not the customer. Marketplace commissions are not in the payload.
 - **Timestamps** (`created_at`, `aceito_em`…) are naive local time (America/Sao_Paulo), not UTC.
 - At `novo_pedido` a 99Food order has `didi_pedido: null`; the block (with `pedido_didi_id`) only shows up in the
@@ -472,4 +505,3 @@ history is the "Eventos do PDV" page (`/system/pos-events`, in the System group)
   it would debit the wrong sauce; fix in the Alloy menu.
 - Status 4 (delivered) arrived for 1522–1526 with `entregue_em`; replays of earlier events (same body) are
   deduplicated.
-

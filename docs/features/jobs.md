@@ -97,21 +97,6 @@ also keeps the organizations CSV free of user rows when the question is about bi
 The organizations export never includes credentials (`Stores.apiKey`, encrypted at rest — see
 [Stores](./stores.md)).
 
-## Known leftovers from RayAI
-
-Code that still carries the old analysis-pipeline vocabulary — none of it is reachable by a job
-that exists today, but it is dead weight to remove before the domain jobs land:
-
-- `components/job-detail.tsx`, `app/lib/jobs/estimate.ts` and `JobTimings`/`JobMetrics` in
-  `app/lib/types/jobs.ts` model a converting → analyzing → synthesizing pipeline with a
-  time-weighted ETA. The Custeio jobs are short (one order, one NFe page), so a phase-based
-  progress bar is probably not the right shape for them.
-- `hasStudy`/`studyFileName`, the `messages: []` field on the detail, and the
-  `jobs.filters.kindLabels['billing.export.csv']` entry (a kind that is in
-  `SYSTEM_ONLY_JOB_KINDS` but no longer in `JobKind`).
-- The queue is still named `exam-processing` in Redis — kept on purpose so renaming it does not
-  orphan enqueued jobs; it is simply "the" Custeio queue.
-
 ## Retention: two places, two answers
 
 A job lives in two stores that are easy to conflate:
@@ -141,8 +126,7 @@ A job lives in two stores that are easy to conflate:
 2. **A TTL on finished jobs**: about 60–90 days for `done`, longer for `failed` (the ones support
    investigates), with the number set by an environment variable like the other retention knobs.
    Automatic deletion has no undo: take a [backup](../operations/backup.md) first and see
-   [Retention](../operations/retention.md), which is where a policy for the rest of the data is
-   still to be decided.
+   a retention policy for the rest of the data is still to be decided.
 
 Neither is built; item 1 is the one that pays for itself first.
 
@@ -173,9 +157,8 @@ Sistema > Jobs is where everything that happens in the background is read, so th
 
 ## New job kinds (2026-10-02)
 
-| Kind | What it does |
-| --- | --- |
-| `pos.order.received` | One PDV webhook delivery (already in `pos_events`) → `Orders` row and, once accepted, the stock debit by recipe; a cancellation gives it back. See [stock-and-cmv.md](./stock-and-cmv.md). |
-| `pos.orders.reprocess` | Settles again every debited order of a store that still has lines without a recipe, against the recipes as they are now ("Reprocessar incompletos" on Pedidos). |
+| Kind                    | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pos.order.received`    | One PDV webhook delivery (already in `pos_events`) → `Orders` row and, once accepted, the stock debit by recipe; a cancellation gives it back. See [stock-and-cmv.md](./stock-and-cmv.md).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `pos.orders.reprocess`  | Settles again every debited order of a store that still has lines without a recipe, against the recipes as they are now ("Reprocessar incompletos" on Pedidos).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `ai.ingredients.review` | The AI (Haiku 5.5) looks at each unreviewed ingredient with only the few Alloy menu lines that look like it (`app/lib/menu-evidence.ts`: the prompt does not grow with the menu) and records `aiReview` plus, when confident, `inOperation` (the owner overrides it in the edit form). Ingredients already in a recipe are skipped. Resumable, capped by a spending limit ("Analisar com IA" on Estoque). After the review it also looks for duplicates (suggestions to merge) and groups variations under a base ingredient (`familyOf`, once per ingredient, `ingredient-families.ts`). It also starts by itself when a captured note creates new drafts (`sefaz.nfe.received` → `ingredient-review-trigger.ts`, one per store at a time), and merges **without asking** only the safe case: a high-confidence group where the kept ingredient is settled, every other is still a draft, and the unit is the same (`isSafeAutoMerge`); the rest stays a suggestion. Automatic merges are in the job result and in the audit log (`raw_ingredients.auto_merge`). |
-

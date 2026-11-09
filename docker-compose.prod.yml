@@ -129,13 +129,8 @@ services:
     networks:
       - app-network
     restart: always
-    # The worker is the only service whose memory scales with the workload. Peak RSS
-    # is roughly APP_BULL_WORKER_CONCURRENCY × APP_AI_LEAF_CONCURRENCY × batch size
-    # × payload size × ~2.7 while a batch is held in memory during a provider call.
-    # --max-old-space-size (see the worker command) bounds the on-heap part below
-    # this limit; the limit itself is the backstop so that over-provisioned knobs
-    # surface as a clean OOM on one job rather than the host killing whichever
-    # process it picks. Raise it in step with the knobs.
+    # Backstop for the worker's memory: an over-provisioned knob surfaces as a clean
+    # OOM on one job rather than the host killing whichever process it picks.
     mem_limit: ${APP_WORKER_MEM_LIMIT:-768m}
     depends_on:
       mongo:

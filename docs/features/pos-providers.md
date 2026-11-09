@@ -16,7 +16,7 @@ integrated): [Alloy API](./alloy-api.md).
 
 ## Providers in the enum today
 
-| Provider    | Status in Custeio                           | Third-party API/webhook                                                                                                                                                                                                |
+| Provider    | Status in Custeio                              | Third-party API/webhook                                                                                                                                                                                                |
 | ----------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `alloy`     | **Active** — we have an account and API access | Open API + webhooks, built for third-party integration. High-confidence source.                                                                                                                                        |
 | `consumer`  | Coming soon (not integrated)                   | Has a "Partner API", but it is event-oriented and designed for **Consumer to query the partner's API** (a marketplace/delivery order flow) — not confirmed that it exposes a simple way to export sales history to us. |

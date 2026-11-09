@@ -16,8 +16,7 @@ moving from the controlled pilot to real paying clients.
       `sefaz.nfe.received`, `whatsapp.message.incoming`) run with a real client. See
       [alerting.md](./alerting.md).
 - [ ] **Data retention**: no policy defined for Custeio's real data — in particular, what to do
-      with the client's A1 certificate when they cancel (delete it, not "keep for safety"). See
-      [retention.md](./retention.md).
+      with the client's A1 certificate when they cancel (delete it, not "keep for safety").
 - [ ] **Custody of the SEFAZ certificate**: the direction of Blob (file) + Key Vault (password)
       discussed in [sefaz-nfe.md](../features/sefaz-nfe.md) has not been implemented yet — today the
       test certificate sits loose in the developer's `~/Downloads`, which is acceptable in dev but

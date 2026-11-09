@@ -23,8 +23,8 @@ consumo observado − consumo esperado (vendas × ficha) = divergência
 ```
 
 Existem saídas **legítimas e conhecidas** que não passam pelo PDV como venda. Se não forem
-registradas, entram na divergência como "possível perda" e o alerta perde credibilidade (*trust over
-fake precision*). Registrá-las separa **o que foi explicado** do **que continua sem explicação**.
+registradas, entram na divergência como "possível perda" e o alerta perde credibilidade (_trust over
+fake precision_). Registrá-las separa **o que foi explicado** do **que continua sem explicação**.
 
 ## 1. Consumo interno / cortesia ("fiado")
 
@@ -43,7 +43,7 @@ controle financeiro.
 
 ### Registro tem que ser trivial
 
-Princípio *invisible by default*: o cliente só **avisa** que algo saiu por essa modalidade.
+Princípio _invisible by default_: o cliente só **avisa** que algo saiu por essa modalidade.
 
 - Informar **produto vendável** (ex.: 1 X-Bacon) + motivo; o sistema baixa os ingredientes pela
   ficha técnica ao custo. Não pedir ingrediente por ingrediente.

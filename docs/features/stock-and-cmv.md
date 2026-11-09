@@ -91,12 +91,12 @@ What exists, in `app/lib/services/order-stock.ts` (job `app/jobs/pos-order-recei
   arrive already accepted. A cancellation event gives the stock back; an order cancelled before its debit is
   marked `reversed` so a late status event cannot debit it.
 - **How much**: for each line, `quantity × product recipe` plus, for each complement, `line quantity ×
-  complement quantity × complement recipe`, summed over every entry (the same code can repeat inside a combo).
+complement quantity × complement recipe`, summed over every entry (the same code can repeat inside a combo).
   Recipes are looked up by PDV code (`product_recipes`); a product with no code is matched by name against
   the catalog row's own recipe. A complement with no recipe is "not answered"; one saved empty "consumes
   nothing".
-- **Cost of the sale**: each ingredient debit is a `sale` movement valued at the average cost *of that
-  moment*; `Orders.calculatedCost` is their sum and `profitMargin = (totalValue − cost) / totalValue`.
+- **Cost of the sale**: each ingredient debit is a `sale` movement valued at the average cost _of that
+  moment_; `Orders.calculatedCost` is their sum and `profitMargin = (totalValue − cost) / totalValue`.
 - **Idempotent**: unique `(storeId, source.externalOrderId, rawIngredientId)` on `sale` (and on `reversal`)
   movements; the movement is written before the stock moves and taken back if the move fails. Verified on a
   real MongoDB with two concurrent runs of the same order: the stock moved once.
@@ -106,7 +106,7 @@ What exists, in `app/lib/services/order-stock.ts` (job `app/jobs/pos-order-recei
 **Reprocessing and the Pedidos screen (2026-10-02).** The ledger works by **revision**: an order's rows carry
 `source.orderRevision`, and the unique index is per `(store, order, ingredient, revision)` and type. Settling an
 order is one operation, `settleOrderStock`: it reads what the ledger already shows (sales − reversals), compares
-it with what the recipes say now (the *target*) and writes **only the difference** — more is a `sale`, less is a
+it with what the recipes say now (the _target_) and writes **only the difference** — more is a `sale`, less is a
 `reversal` at the cost it was taken at. The first debit, a reprocess after a recipe was added, and a cancellation
 (empty target) are all that one operation. Reprocess and cancel first claim the next revision with a conditional
 update on `Orders.stockRevision`, so two runs cannot settle the same order at once (verified on a real MongoDB:
@@ -171,7 +171,7 @@ Cheapest fix, no code: the owner tunes `minAlertStock` down (or off) for an ingr
 restocks in one lump sum on a known cadence — `currentStock`/`minAlertStock` are already freely
 editable (see [Stock](./stock.md#behavior)). Worth trying before building anything below.
 
-If that is not enough — the owner also wants to *see* an accurate number mid-month, not just avoid
+If that is not enough — the owner also wants to _see_ an accurate number mid-month, not just avoid
 a false alarm — a three-part plan, each phase reviewed before the next:
 
 1. **A lightweight manual top-up, text first.** The owner sends a fixed-format WhatsApp message
@@ -199,7 +199,7 @@ a false alarm — a three-part plan, each phase reviewed before the next:
    every 30 days"). Overdue → a factual WhatsApp notice ("Fornecedor X sem nota fiscal desde
    {date}; o normal é a cada {N} dias — vale falar com sua contadora"), **not a claim about a
    specific legal consequence** — we are not lawyers, and the real exposure (e.g. no IBS/CBS credit
-   on an unsubstantiated purchase, see [market-research.md](../product/market-research.md)) varies
+   on an unsubstantiated purchase) varies
    by case.
 
 None of this is code yet — it needs its own review, one item at a time, before implementing.

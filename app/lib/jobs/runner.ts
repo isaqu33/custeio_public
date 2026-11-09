@@ -3,7 +3,6 @@ import connectDB from '../connect-db';
 import JobsDB from '@/app/models/jobs';
 import { jobRegistry } from '@/app/jobs/registry';
 import { logger } from '../logger';
-import { sendFailureWebhook, sendSuccessWebhook, type WebhookDeliveryResult } from '../webhook';
 import { PermanentJobError } from './errors';
 import type { JobKind } from './types';
 import { jobPayloadSchemas } from './schemas';
@@ -15,39 +14,6 @@ type QueueBackedJob = {
   status?: string;
   config?: { attempts?: number };
 };
-
-// Persist the webhook delivery outcome onto the job doc (support jobs view).
-async function recordWebhook(jobId: string, result: WebhookDeliveryResult): Promise<void> {
-  await JobsDB.updateOne(
-    { _id: jobId },
-    {
-      $set: {
-        webhook: {
-          delivered: result.delivered,
-          attempts: result.attempts,
-          lastStatus: result.lastStatus,
-          deliveredAt: new Date(),
-        },
-      },
-      $push: {
-        logs: {
-          jobStatus: result.delivered ? 'done' : 'failed',
-          message: `Webhook ${result.delivered ? 'entregue' : 'com falha na entrega'} após ${result.attempts} tentativa(s) (status ${result.lastStatus})`,
-          step: result.delivered ? 'webhook-delivered' : 'webhook-failed',
-          timestamp: new Date(),
-        },
-      },
-    },
-  );
-}
-
-// Fire-and-forget so a slow/retrying webhook never holds the worker job slot.
-// Never rejects — outcome is recorded; delivery errors are logged, not thrown.
-function deliverWebhook(jobId: string, send: () => Promise<WebhookDeliveryResult>): void {
-  send()
-    .then((result) => recordWebhook(jobId, result))
-    .catch((err) => logger.warn({ err, dbJobId: jobId }, 'webhook post-processing failed'));
-}
 
 export async function runQueuedJob(job: Job<{ jobId: string }>) {
   const dbJobId = job.data?.jobId;
@@ -89,10 +55,6 @@ export async function runQueuedJob(job: Job<{ jobId: string }>) {
   );
 
   const maxAttempts = job.opts?.attempts || dbJob.config?.attempts || 3;
-
-  // Captured from the parsed payload so we can notify the caller on a terminal
-  // state. Only analysis jobs carry a webhook URL; other kinds leave it undefined.
-  let webhookUrl: string | undefined;
 
   try {
     // Inside the try on purpose: a worker that does not know this kind (an old
@@ -138,20 +100,13 @@ export async function runQueuedJob(job: Job<{ jobId: string }>) {
       },
     );
 
-    if (webhookUrl) {
-      const url = webhookUrl;
-      deliverWebhook(dbJobId, () => sendSuccessWebhook(url, dbJobId, result ?? {}));
-    }
-
     return result;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
     // A permanent failure (a rejected AI model, an unusable payload) fails the
     // same way on every attempt. Discarding stops Bull from re-running it and
     // stacking identical errors on the job; the support retry action enqueues a
-    // fresh job and is unaffected. It also makes THIS attempt the final one, so
-    // the failure webhook must fire now — the attempt counter will never reach
-    // maxAttempts.
+    // fresh job and is unaffected.
     const permanent = err instanceof PermanentJobError;
     const failureCode = permanent ? err.code : undefined;
     if (permanent) {
@@ -182,13 +137,6 @@ export async function runQueuedJob(job: Job<{ jobId: string }>) {
       },
     );
     logger.error({ err, dbJobId, queueJobId: job.id, permanent }, 'queued job execution failed');
-
-    // Only notify on the final attempt — Bull retries before this, and the
-    // caller should hear about a failure once it's definitive.
-    if (webhookUrl && (permanent || job.attemptsMade + 1 >= maxAttempts)) {
-      const url = webhookUrl;
-      deliverWebhook(dbJobId, () => sendFailureWebhook(url, dbJobId, errorMessage));
-    }
     throw err;
   }
 }

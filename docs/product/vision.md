@@ -45,11 +45,11 @@ consumo teórico e real, histórico, fornecedores e prazos de reposição. Com i
 
 ## Três tempos
 
-| Tempo    | Pergunta                    | O que entra                                                                                            |
-| -------- | --------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Passado  | **Entender** o que houve    | compras, vendas, consumo, custos, CMV, divergências, desperdícios                                      |
-| Presente | **Diagnosticar** como está  | estoque, custo atual, margem, cobertura, insumos críticos, estoque negativo, fichas incompletas, perdas |
-| Futuro   | **Antecipar** o que vem     | demanda esperada, consumo por insumo, quando o estoque acaba, risco de ruptura, quando e quanto comprar |
+| Tempo    | Pergunta                   | O que entra                                                                                             |
+| -------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Passado  | **Entender** o que houve   | compras, vendas, consumo, custos, CMV, divergências, desperdícios                                       |
+| Presente | **Diagnosticar** como está | estoque, custo atual, margem, cobertura, insumos críticos, estoque negativo, fichas incompletas, perdas |
+| Futuro   | **Antecipar** o que vem    | demanda esperada, consumo por insumo, quando o estoque acaba, risco de ruptura, quando e quanto comprar |
 
 > O Custeio entende o passado, explica o presente e ajuda a preparar a próxima compra.
 
@@ -165,5 +165,4 @@ integração automática + compras + vendas + ficha técnica + estoque + reconci
 
 …e a qualidade dos dados acumulados ao longo do tempo.
 
-Ver também: [`positioning.md`](./positioning.md) · [`principles.md`](./principles.md) ·
-[`roadmap.md`](./roadmap.md) · [`market-research.md`](./market-research.md)
+Ver também: [`principles.md`](./principles.md) · [`roadmap.md`](./roadmap.md)

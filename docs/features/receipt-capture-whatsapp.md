@@ -25,14 +25,14 @@ Exemplos reais (28/09/2026): um cupom da Super Adega ("consumidor não identific
 
 ## O que precisa de IA e o que não precisa
 
-| Tarefa                                                          | IA?  | Como                                                                                  |
-| --------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------- |
-| Ler itens, fornecedor e data de uma **foto**                    | Sim  | Visão (LLM) devolve um rascunho estruturado                                           |
-| Entender um **áudio** ("comprei 3 caixas de…")                  | Sim  | Transcrição + intenção; sempre confirmar antes de gravar                              |
-| Saber se a leitura está certa                                   | Não  | Soma dos itens = total do cupom (nos dois exemplos bate: 197,22 e 264,79)             |
-| Não registrar a mesma nota duas vezes                           | Não  | Chave de acesso (QR ou lida); `dedupe` por chave                                      |
-| Cruzar com compra digitada à mão ou NF-e que chegou depois      | Não  | Já existe o aviso de possível compra em dobro (tela Notas)                            |
-| Converter a embalagem ("2 FD", "1X1,6Kg × 6", "1X3,5Kg")        | Não  | De/Para por fornecedor + código; o **EAN** impresso no cupom é uma chave estável      |
+| Tarefa                                                     | IA? | Como                                                                             |
+| ---------------------------------------------------------- | --- | -------------------------------------------------------------------------------- |
+| Ler itens, fornecedor e data de uma **foto**               | Sim | Visão (LLM) devolve um rascunho estruturado                                      |
+| Entender um **áudio** ("comprei 3 caixas de…")             | Sim | Transcrição + intenção; sempre confirmar antes de gravar                         |
+| Saber se a leitura está certa                              | Não | Soma dos itens = total do cupom (nos dois exemplos bate: 197,22 e 264,79)        |
+| Não registrar a mesma nota duas vezes                      | Não | Chave de acesso (QR ou lida); `dedupe` por chave                                 |
+| Cruzar com compra digitada à mão ou NF-e que chegou depois | Não | Já existe o aviso de possível compra em dobro (tela Notas)                       |
+| Converter a embalagem ("2 FD", "1X1,6Kg × 6", "1X3,5Kg")   | Não | De/Para por fornecedor + código; o **EAN** impresso no cupom é uma chave estável |
 
 ## Caminhos considerados
 
@@ -43,8 +43,8 @@ Exemplos reais (28/09/2026): um cupom da Super Adega ("consumidor não identific
 - **C) Digitar** (o que existe).
 
 **Recomendação:** B, com a chave de acesso e a soma como **verificação independente**, e sempre com
-confirmação antes de gravar. A IA sugere; a soma e a chave checam; o dono decide (*trust over fake
-precision*).
+confirmação antes de gravar. A IA sugere; a soma e a chave checam; o dono decide (_trust over fake
+precision_).
 
 ## Fluxo desenhado
 

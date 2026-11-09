@@ -47,7 +47,7 @@ and `captureOneFile` (`app/lib/services/nfe-capture.ts`) dispatches on the file'
 `ParsedNfe` shape and the same Tier 1/2 capture pipeline described above — a PDF-sourced invoice
 is indistinguishable from an XML-sourced one once parsed.
 
-A DANFE has no schema — it's the *printed* representation, and its item-table layout is
+A DANFE has no schema — it's the _printed_ representation, and its item-table layout is
 per-issuer, unlike the XML's fixed `procNFe` structure. So the two are trusted differently:
 
 - **Always reliable, because the DANFE's layout is nationally standardized regardless of which
@@ -281,7 +281,7 @@ away? **Partially, and only in the best case:**
 - Documents stay queryable via distribution for **up to 90 days** after entering the Ambiente
   Nacional — so in principle a first sync could reach back ~3 months.
 - **But** NSU generation for a CNPJ only keeps flowing if that CNPJ's distribution service has been
-  queried **at least once in the last 60 days**. A Store's CNPJ that has *never* used
+  queried **at least once in the last 60 days**. A Store's CNPJ that has _never_ used
   `NFeDistribuicaoDFe` before (the common case — a shopkeeper who never had software doing this)
   may have its NSU sequence interrupted/at zero, meaning the first `distNSU` call starts delivering
   **from the moment we start polling forward**, not automatically backfilling everything the
@@ -310,7 +310,7 @@ away? **Partially, and only in the best case:**
 
 #### Idea: capture the access key from a photo of the paper DANFE, over WhatsApp (not implemented)
 
-Discussed 2026-09-28, prompted by mitigation 2 above needing an access key from *somewhere*. Every
+Discussed 2026-09-28, prompted by mitigation 2 above needing an access key from _somewhere_. Every
 printed DANFE carries the 44-digit key (and, on newer ones, a QR code encoding it) even when the
 owner never had the XML file to begin with — which is the common case for a small shopkeeper who
 just keeps the paper. Since WhatsApp is already the planned channel (see
@@ -426,11 +426,11 @@ Discussed 2026-09-22. The concern driving this choice: the client should never s
 unpredictable AI line item at the end of the month, and we want one fewer billing relationship to
 worry about. Three options were compared before deciding:
 
-| Option                        | Stays inside Azure? | Cost                                  | Main risk                                                                 |
-| ------------------------------ | -------------------- | -------------------------------------- | --------------------------------------------------------------------------- |
-| **Azure OpenAI (PAYG)** — chosen | Yes                  | ~cents/month at this volume (GPT-4o-mini: $0.15/1M input, $0.60/1M output tokens) | None significant — this is the "no drama" path |
-| Self-host (Ollama + Phi-3.5/4-mini) | Yes (same infra)    | Fixed, but needs 6–8 GB extra RAM on the host just for the model | Phi is English-first; Portuguese/food-service-abbreviation quality unverified |
-| Gemini free tier                | No — separate Google Cloud account | R$0 | Not resold through Azure at all (Google's own stack, a direct Azure competitor); free-tier inputs train Google's models by default; free tiers can change or disappear without notice (see the GitHub Models precedent below) |
+| Option                              | Stays inside Azure?                | Cost                                                                              | Main risk                                                                                                                                                                                                                     |
+| ----------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Azure OpenAI (PAYG)** — chosen    | Yes                                | ~cents/month at this volume (GPT-4o-mini: $0.15/1M input, $0.60/1M output tokens) | None significant — this is the "no drama" path                                                                                                                                                                                |
+| Self-host (Ollama + Phi-3.5/4-mini) | Yes (same infra)                   | Fixed, but needs 6–8 GB extra RAM on the host just for the model                  | Phi is English-first; Portuguese/food-service-abbreviation quality unverified                                                                                                                                                 |
+| Gemini free tier                    | No — separate Google Cloud account | R$0                                                                               | Not resold through Azure at all (Google's own stack, a direct Azure competitor); free-tier inputs train Google's models by default; free tiers can change or disappear without notice (see the GitHub Models precedent below) |
 
 Why Azure OpenAI won:
 
@@ -516,12 +516,12 @@ today.
 
 Discussed 2026-09-22, in case it wasn't obvious from the "validate in homologation" bullet above.
 
-- **Where the code runs doesn't matter.** `NFeDistribuicaoDFe` is a service *we* pull from (there is
+- **Where the code runs doesn't matter.** `NFeDistribuicaoDFe` is a service _we_ pull from (there is
   no inbound webhook to receive), and SEFAZ documents its own guidance to resolve the host by DNS
   rather than a fixed IP — there is no whitelist to register. Authentication is entirely by the
   client certificate presented over mTLS, not by the caller's network origin. **A laptop running
   the job locally can talk to the real production webservice** just as well as a deployed server
-  can; "produção" here is about which SEFAZ *environment* (`tpAmb`) we point at, not where our own
+  can; "produção" here is about which SEFAZ _environment_ (`tpAmb`) we point at, not where our own
   code is hosted.
 - **But `tpAmb=2` (homologação) never has real invoices, even with real-looking data in the
   fields.** It is SEFAZ's own definition: documents issued in homologação have no fiscal/legal
@@ -573,6 +573,7 @@ Planned in three atomic items, each reviewed before the next:
    - Needs a persisted "ciência sent" state per access key, so it is not sent twice.
 
 **Risks and constraints**
+
 - **Irreversible and legally binding** under the client's CNPJ. Item 2 only runs against production
   with explicit approval, one invoice at a time, like the query-only test above.
 - **Only ever `210210`.** Confirmation/unknown/not-performed (`210200`/`210220`/`210240`) have fiscal
@@ -630,11 +631,12 @@ and, before selling, with someone who drafts contracts.
 
 **What the Ciência is, in plain terms.** The client declaring to SEFAZ "I am aware an invoice was
 issued against my CNPJ". It does **not** say the goods arrived, the value is right, or that the
-client accepts to pay (that is Confirmação, `210200`). It is a *non-conclusive* manifestation: it
+client accepts to pay (that is Confirmação, `210200`). It is a _non-conclusive_ manifestation: it
 creates no debt or acceptance, and the client can still send `210220`/`210240` later. It is
 irreversible (cannot be cancelled) but the mildest of the four events.
 
 **Pending before enabling it for a real client**
+
 1. **Ask the accountant:** is there any obligation or deadline for a conclusive manifestation in
    the client's state? Has anyone had trouble by giving only Ciência?
 2. **Authorization clause in the terms of use/contract.** The event is signed with the client's A1
@@ -645,6 +647,7 @@ irreversible (cannot be cancelled) but the mildest of the four events.
    decision; the first production test is one client of ours, one invoice at a time.
 
 **To decide: invoices issued against the client's CNPJ that the owner never saw (fraud)**
+
 - Someone can issue an invoice in another company's name. Automatic Ciência on everything would
   register "aware" of an invoice the owner never saw — it does not validate the invoice, but it does
   not question it either.
@@ -656,6 +659,7 @@ irreversible (cannot be cancelled) but the mildest of the four events.
   warning after the fact — that costs the item-level data until then.
 
 **To decide / confirm: conclusive manifestation**
+
 - Formally SEFAZ expects something conclusive after the Ciência. It is generally not mandatory, but
   there may be state- or operation-specific rules.
 - Not known: the exact deadline, nor whether there is any consequence for never concluding. To be
@@ -687,7 +691,7 @@ this document has assumed so far), even though the DANFE has the buyer's CNPJ pr
   number is not a CNPJ recipient inside the XML, or the supplier is not complying. Worth checking in
   the XML itself, and a good argument for asking that supplier for an NF-e.
 
-- **What we *could* do, not recommended for the MVP**: each NFC-e carries a QR code pointing at its
+- **What we _could_ do, not recommended for the MVP**: each NFC-e carries a QR code pointing at its
   issuing state's own public consulta page (no certificate needed — it exists precisely so any
   consumer can verify a receipt), which could in principle be queried by access key. Rejected for
   now: it is a per-state page, not a national API, so it would mean one integration per state
@@ -718,7 +722,7 @@ none for DF**.
 
 **Checked on the real note (2026-10-02).** The DF public consultation (opened by hand by the owner) shows
 the NFC-e of 2026-09-28 from the meat supplier with the **Consumidor CNPJ = Loja Piloto's own CNPJ
-(00.000.000/0001-00)** — so the buyer *is* identified inside the document, **after** the 2026-01-05 ban on
+(00.000.000/0001-00)** — so the buyer _is_ identified inside the document, **after** the 2026-01-05 ban on
 NFC-e to a CNPJ (the supplier is not complying, or DF does not enforce it). Its access key is valid (check
 digit matches): UF 53, 2026-09, issuer CNPJ 11.111.111/0001-11, model 65, series 1, number 876. The note has
 one item ("CARNE", `Qtde 1000.0000 UN`, unit R$ 1,00, total R$ 1.000,00) — no weight, no types. The

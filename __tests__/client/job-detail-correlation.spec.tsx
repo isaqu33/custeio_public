@@ -10,15 +10,14 @@ jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: jest.fn() }) 
 function job(overrides: Partial<JobDetail> = {}): JobDetail {
   return {
     _id: '6a88f78ffb2d5627260ec7ed',
-    examId: 'study-abc',
+    reference: 'job-abc',
     organizationId: 'org-1',
-    kind: 'analysis.process.received',
-    type: 'RayPilot',
+    kind: 'sefaz.nfe.received',
+    type: 'nfe-capture',
     status: 'done',
     createdAt: new Date('2026-08-22T12:00:00Z'),
     logs: [],
     errorLogs: [],
-    messages: [],
     ...overrides,
   } as JobDetail;
 }

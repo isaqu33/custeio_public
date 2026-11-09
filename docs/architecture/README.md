@@ -1,6 +1,6 @@
 # Architecture
 
-[**kairosflow-architecture.pdf**](./kairosflow-architecture.pdf) — five pages, A4 landscape:
+[**architecture.html**](./architecture.html) — five pages, A4 landscape (`npm run docs:pdf` renders it to PDF):
 
 1. **Topology** — the three roles of the same image (web, webhook ingestion, worker) and what talks
    to them.
@@ -12,8 +12,7 @@
 5. **Multi-tenancy, secrets and limits** — Cliente → Loja → domain, where each credential lives and
    which external limits shape the design.
 
-The source is [`architecture.html`](./architecture.html); the PDF is a committed artifact.
-Regenerate it after editing the HTML:
+The PDF is not committed; generate it from the HTML with:
 
 ```bash
 npm run docs:pdf
@@ -46,10 +45,8 @@ as ingestion — the Alloy and Meta webhooks will need a prefix classified as su
 `StockMovements`, `SefazRequests`), rate limiting, encryption at rest for the store token, the queue,
 the two CSV export jobs, **`pos.catalog.sync`** (Alloy client) and **`sefaz.nfe.received`** (upload
 of XML/PDF; the SEFAZ source is simulated). What does **not** exist: `pos.order.received`,
-`whatsapp.message.incoming`, any webhook route, a live SEFAZ source. The PDF (page 3 and 4) still
-marks the two implemented jobs as `planned` and predates them.
+`whatsapp.message.incoming`, any webhook route, a live SEFAZ source.
 
 See also: [Jobs](../features/jobs.md) · [Stock and real CMV](../features/stock-and-cmv.md) ·
 [SEFAZ NFe](../features/sefaz-nfe.md) · [Alloy API](../features/alloy-api.md) ·
 [WhatsApp](../features/whatsapp-quick-query.md)
-

@@ -16,14 +16,14 @@ brand-tinted (not generic gray) row hover.
 
 ## The pieces
 
-| Piece | File | Role |
-| --- | --- | --- |
-| `Card` | `components/ui/card.tsx` | The shared floating-card primitive: `rounded-xl border` + a soft two-layer shadow. Not new — already used by the sidebar and dialogs. |
-| `FilterShell` | `components/filter-shell.tsx` | The search/filter card **above** the table. Now built on `Card` so it visually stacks with the table as one family instead of two different boxes. |
-| `DataTableCard` | `components/data-table-shell.tsx` | Wraps the whole table in a `Card`, `overflow-hidden` so the table's square corners clip to the card's rounded ones. |
-| `DataTableToolbar` | `components/data-table-shell.tsx` | The row-scoped action bar (create, refresh) inside the card, above `<Table>`. `justify-end` by default; most tables override to `justify-between` — see [Toolbar layout](#toolbar-layout-and-button-style) below. Page-level filtering belongs in `FilterShell`, not here. |
-| `DataTableFooter` | `components/data-table-shell.tsx` | The pagination row inside the card, below `<Table>`. |
-| `Table`/`TableHeader`/`TableHead`/`TableCell`/`TableRow` | `components/ui/table.tsx` | The primitives themselves carry the refined look (see below) — nothing more to opt into at the call site. |
+| Piece                                                    | File                              | Role                                                                                                                                                                                                                                                                       |
+| -------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card`                                                   | `components/ui/card.tsx`          | The shared floating-card primitive: `rounded-xl border` + a soft two-layer shadow. Not new — already used by the sidebar and dialogs.                                                                                                                                      |
+| `FilterShell`                                            | `components/filter-shell.tsx`     | The search/filter card **above** the table. Now built on `Card` so it visually stacks with the table as one family instead of two different boxes.                                                                                                                         |
+| `DataTableCard`                                          | `components/data-table-shell.tsx` | Wraps the whole table in a `Card`, `overflow-hidden` so the table's square corners clip to the card's rounded ones.                                                                                                                                                        |
+| `DataTableToolbar`                                       | `components/data-table-shell.tsx` | The row-scoped action bar (create, refresh) inside the card, above `<Table>`. `justify-end` by default; most tables override to `justify-between` — see [Toolbar layout](#toolbar-layout-and-button-style) below. Page-level filtering belongs in `FilterShell`, not here. |
+| `DataTableFooter`                                        | `components/data-table-shell.tsx` | The pagination row inside the card, below `<Table>`.                                                                                                                                                                                                                       |
+| `Table`/`TableHeader`/`TableHead`/`TableCell`/`TableRow` | `components/ui/table.tsx`         | The primitives themselves carry the refined look (see below) — nothing more to opt into at the call site.                                                                                                                                                                  |
 
 ## What changed in the shared primitives
 

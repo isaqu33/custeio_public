@@ -167,11 +167,11 @@ rightly none: 71 messages with typos, slang, voice transcripts, two intents, ite
 attempts to break the rules); stage 2 is the reply written from a function result (shows the returned
 numbers, invents none, flags incomplete data, never says a proposal was saved before confirmation).
 
-| Model, effort           | Routing  | Reply | US$ / call | R$ / call |
-| ----------------------- | -------- | ----- | ---------- | --------- |
-| Haiku 5.5, low          | 70/71    | 7/8   | 0.00040    | ~0.002    |
-| Haiku 5.5, medium       | 69–71/71 | 8/8   | 0.00041    | ~0.002    |
-| Sonnet 5.5, low         | 71/71    | 8/8   | 0.0076     | ~0.04     |
+| Model, effort     | Routing  | Reply | US$ / call | R$ / call |
+| ----------------- | -------- | ----- | ---------- | --------- |
+| Haiku 5.5, low    | 70/71    | 7/8   | 0.00040    | ~0.002    |
+| Haiku 5.5, medium | 69–71/71 | 8/8   | 0.00041    | ~0.002    |
+| Sonnet 5.5, low   | 71/71    | 8/8   | 0.0076     | ~0.04     |
 
 - **Haiku 5.5 is enough for routing and replies** and costs ~19x less than Sonnet 5.5; a client with 900
   messages a month costs a few reais (routing plus the reply call). Sonnet stays for harder jobs (reading a

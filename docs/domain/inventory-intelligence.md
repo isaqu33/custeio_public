@@ -43,12 +43,12 @@ Ingredientes críticos, estoque negativo, fichas técnicas incompletas, divergê
 
 ## Dependências
 
-| Precisa de                              | Onde está / estado                                                                  |
-| --------------------------------------- | ----------------------------------------------------------------------------------- |
-| Saldo confiável por insumo              | IMPLEMENTADO (`RawIngredients`, `StockMovements`, contagem)                         |
-| Consumo previsto por insumo             | PLANEJADO — [`purchasing-forecast.md`](./purchasing-forecast.md)                    |
-| Ciclo de pedido/entrega do fornecedor   | PLANEJADO — [`supplier-lead-time.md`](./supplier-lead-time.md)                      |
-| Dias/horários em que a loja funciona    | PLANEJADO (a `Store` não tem calendário operacional)                                |
+| Precisa de                            | Onde está / estado                                               |
+| ------------------------------------- | ---------------------------------------------------------------- |
+| Saldo confiável por insumo            | IMPLEMENTADO (`RawIngredients`, `StockMovements`, contagem)      |
+| Consumo previsto por insumo           | PLANEJADO — [`purchasing-forecast.md`](./purchasing-forecast.md) |
+| Ciclo de pedido/entrega do fornecedor | PLANEJADO — [`supplier-lead-time.md`](./supplier-lead-time.md)   |
+| Dias/horários em que a loja funciona  | PLANEJADO (a `Store` não tem calendário operacional)             |
 
 ## Fora do escopo do primeiro corte
 

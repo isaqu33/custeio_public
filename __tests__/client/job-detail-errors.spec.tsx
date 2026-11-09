@@ -10,15 +10,14 @@ jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: jest.fn() }) 
 function job(overrides: Partial<JobDetail> = {}): JobDetail {
   return {
     _id: '6a88f78ffb2d5627260ec7ed',
-    examId: 'study-abc',
+    reference: 'job-abc',
     organizationId: 'org-1',
-    kind: 'analysis.process.received',
-    type: 'RayPilot',
+    kind: 'sefaz.nfe.received',
+    type: 'nfe-capture',
     status: 'failed',
     createdAt: new Date('2026-08-25T12:00:00Z'),
     logs: [],
     errorLogs: [],
-    messages: [],
     ...overrides,
   } as JobDetail;
 }
@@ -153,58 +152,5 @@ describe('JobDetailBody step list', () => {
       .map((el) => el.textContent ?? '')
       .filter((text) => text.includes('Worker picked job') || text.includes('Reused 1'));
     expect(steps[0]).toContain('Reused 1 converted image');
-  });
-});
-
-// "gemini did six batches, claude did the seventh and wrote the laudo" is the
-// sentence someone reads a half-failed job to reconstruct. It used to exist only
-// in the worker log.
-describe('JobDetailBody AI attribution', () => {
-  it('names each model and marks the one that was not the primary', () => {
-    render(
-      <JobDetailBody
-        detail={job({
-          status: 'done',
-          progress: {
-            phase: 'done',
-            batchesTotal: 7,
-            batchesDone: 7,
-            aiAttribution: [
-              { provider: 'gemini', model: 'gemini-3.7-flash', batches: 6, fallback: false },
-              { provider: 'openai', model: 'gpt-4o', batches: 1, fallback: true },
-            ],
-            aiSynthesis: { provider: 'openai', model: 'gpt-4o', fallback: true },
-          },
-        })}
-      />,
-    );
-
-    expect(screen.getByText('gemini/gemini-3.7-flash')).toBeInTheDocument();
-    expect(screen.getByText(/6 lote/)).toBeInTheDocument();
-    expect(screen.getAllByText('openai/gpt-4o').length).toBeGreaterThan(0);
-    expect(screen.getByText('escreveu o laudo')).toBeInTheDocument();
-    expect(screen.getAllByText('fallback').length).toBeGreaterThanOrEqual(2);
-  });
-
-  // One model doing everything needs no explanation; printing it would be a line
-  // that says nothing.
-  it('stays quiet when a single primary model did all the work', () => {
-    render(
-      <JobDetailBody
-        detail={job({
-          status: 'done',
-          progress: {
-            phase: 'done',
-            batchesTotal: 3,
-            batchesDone: 3,
-            aiAttribution: [
-              { provider: 'gemini', model: 'gemini-3.7-flash', batches: 3, fallback: false },
-            ],
-          },
-        })}
-      />,
-    );
-
-    expect(screen.queryByText('IA que respondeu')).not.toBeInTheDocument();
   });
 });

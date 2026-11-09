@@ -369,9 +369,7 @@ describe('processPosEvent — debit', () => {
     orderFindOneMock.mockReturnValue(
       chain(
         orderDoc({
-          items: [
-            { externalCode: '', name: 'Casa Burguer + Fritas', quantity: 3, modifiers: [] },
-          ],
+          items: [{ externalCode: '', name: 'Casa Burguer + Fritas', quantity: 3, modifiers: [] }],
         }),
       ),
     );

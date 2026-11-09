@@ -7,12 +7,12 @@ with, then **"Precisa da sua atenção"**, the exceptions that call for a decisi
 kind with nothing to report is absent, and an empty list means all is well; money first where it can be
 said).
 
-| Tile         | Shows                                                    | Read from                                           |
-| ------------ | -------------------------------------------------------- | --------------------------------------------------- |
-| `stockValue` | Value of the stock on hand (an **estimate**: purchases minus sales, reliable only after a physical count) | `getStockSummaryForStore` |
-| `cmv`        | Cost of goods sold, last 30 days                         | sales history: complete-recipe orders only          |
-| `margin`     | Margin, last 30 days                                     | same                                                |
-| `lowStock`   | Ingredients at or below their minimum                    | `RawIngredients.minAlertStock`                      |
+| Tile         | Shows                                                                                                     | Read from                                  |
+| ------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `stockValue` | Value of the stock on hand (an **estimate**: purchases minus sales, reliable only after a physical count) | `getStockSummaryForStore`                  |
+| `cmv`        | Cost of goods sold, last 30 days                                                                          | sales history: complete-recipe orders only |
+| `margin`     | Margin, last 30 days                                                                                      | same                                       |
+| `lowStock`   | Ingredients at or below their minimum                                                                     | `RawIngredients.minAlertStock`             |
 
 CMV and margin only count orders whose recipes were all found, and say how many that is ("25 de 28
 pedidos"): an incomplete order has a partial cost and would make the numbers look better than they are.

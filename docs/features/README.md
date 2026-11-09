@@ -8,7 +8,6 @@ companion to the typed registry:
 - `docs/features/*.md` explains product intent, page behavior, restrictions, and testing
   expectations.
 
-
 ## New feature checklist
 
 Every new product feature should include the implementation, documentation, and tests in the

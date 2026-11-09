@@ -32,17 +32,33 @@ async function main() {
   console.log('by syncResult:', Object.fromEntries(byResult.map((r) => [String(r._id), r.n])));
 
   const byEvent = await events
-    .aggregate([{ $group: { _id: { $concat: ['$event', ' / status ', { $toString: '$payload.novo_status' }] }, n: { $sum: 1 } } }])
+    .aggregate([
+      {
+        $group: {
+          _id: { $concat: ['$event', ' / status ', { $toString: '$payload.novo_status' }] },
+          n: { $sum: 1 },
+        },
+      },
+    ])
     .toArray();
   console.log('by event:', Object.fromEntries(byEvent.map((r) => [String(r._id), r.n])));
 
   const orders = await events.distinct('externalOrderId');
-  console.log(`distinct orders: ${orders.length} (${orders.slice(0, 12).join(', ')}${orders.length > 12 ? ', …' : ''})`);
+  console.log(
+    `distinct orders: ${orders.length} (${orders.slice(0, 12).join(', ')}${orders.length > 12 ? ', …' : ''})`,
+  );
 
   const range = await events
-    .aggregate([{ $group: { _id: null, first: { $min: '$receivedAt' }, last: { $max: '$receivedAt' } } }])
+    .aggregate([
+      { $group: { _id: null, first: { $min: '$receivedAt' }, last: { $max: '$receivedAt' } } },
+    ])
     .toArray();
-  console.log('received between:', range[0]?.first?.toISOString?.(), '→', range[0]?.last?.toISOString?.());
+  console.log(
+    'received between:',
+    range[0]?.first?.toISOString?.(),
+    '→',
+    range[0]?.last?.toISOString?.(),
+  );
 
   // Do the bridge's keys match a local Store? (hash only, never the key)
   const hashes = await events.distinct('keyHash');
@@ -50,7 +66,9 @@ async function main() {
     const store = await StoreDB.findOne({ provider: 'alloy', webhookKeyHash: hash })
       .select('_id name')
       .lean<{ _id: unknown; name?: string } | null>();
-    console.log(`key …${String(hash).slice(-6)} → ${store ? `Store ${String(store._id)} (${store.name ?? ''})` : 'NO local Store matches'}`);
+    console.log(
+      `key …${String(hash).slice(-6)} → ${store ? `Store ${String(store._id)} (${store.name ?? ''})` : 'NO local Store matches'}`,
+    );
   }
 
   const local = await PosEventDB.countDocuments({});

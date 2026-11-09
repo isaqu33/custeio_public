@@ -142,7 +142,7 @@ apimentado: 900 ml", "junta esses dois bacons", "cria o preparo cebola carameliz
 
 While building, the most useful thing was a short list of "what is still open". The product should do that
 by itself and send it to the owner on WhatsApp, as a **cron** (a platform cron registered in Sistema > Jobs
-like `cron.sefaz.auto-sync`, `cron.*`), so nobody has to remember to open a screen. It is *exception driven*:
+like `cron.sefaz.auto-sync`, `cron.*`), so nobody has to remember to open a screen. It is _exception driven_:
 it says only what needs attention, and says it in R$ when it can.
 
 - **What it collects (deterministic, from the code, not from the AI):**
@@ -179,7 +179,7 @@ output) showed, so it is not lost (`scripts/dev/recipe-draft-spike.ts`, read-onl
   bun, the 150 g Angus patty and the fries right, multiplied combos correctly, and put what it did not have
   (caramelized onion, the sauce of choice, the free sodas) in "missing" instead of inventing it.
 - **Weak spots**: it guesses the "standard" portions (cheese 20 g, bacon 30 g; the owner uses 10 g of cream
-  cheddar) and read a cheddar *prep* as sliced; it trips on the unit of pack-style ingredients ("20 un" of a
+  cheddar) and read a cheddar _prep_ as sliced; it trips on the unit of pack-style ingredients ("20 un" of a
   300 g cheese, "10 un" of a lettuce tray) — a cap alone does not catch it, a line-cost-vs-price check would;
   the cheapest model (3.5-flash-lite) was clearly worse than 3.5-flash (7–9 s per product vs 2 s).
 - **Free tier is not a basis for production**: `gemini-3.8-flash` answered 503 "high demand" repeatedly,
@@ -193,6 +193,5 @@ output) showed, so it is not lost (`scripts/dev/recipe-draft-spike.ts`, read-onl
 - **Prerequisite for v2**: the catalog sync does not store the item/complement descriptions yet.
 - **It must know where an ingredient lives**: every "+ Fritas" product carries the complement "Fritas Combo"
   (`802`, or empty code), and an order lists it with its own quantity — so the fries portion belongs in the
-  *complement's* recipe, not in the product's (the draft put it in the product, which would count it twice and
+  _complement's_ recipe, not in the product's (the draft put it in the product, which would count it twice and
   get a combo's "Fritas Combo × 3" wrong). The same goes for the free soda ("Refrigerante 200ml", `804`).
-

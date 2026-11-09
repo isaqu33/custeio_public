@@ -16,7 +16,6 @@ import type {
   JobProgress,
   JobStatus,
   JobStepLog,
-  JobWebhookOutcome,
   JobsListSuccess,
 } from '@/app/lib/types/jobs';
 
@@ -33,13 +32,9 @@ type JobsListParams = {
 };
 
 // Only the fields the listing table actually renders. Projecting this keeps the
-// step logs, payload, progress and webhook data off the wire — the list can be
-// large, and those nested fields belong to the detail view.
-// `payload` rides along only so the row can say whether a study is downloadable
-// and under what name — it is stripped in the mapping below, so the stored blob
-// path never reaches the client.
-const LIST_PROJECTION =
-  'examId organizationId kind type status createdAt result payload.fileName payload.requestFileUrl';
+// step logs, payload and progress off the wire — the list can be large, and
+// those nested fields belong to the detail view.
+const LIST_PROJECTION = 'examId organizationId kind type status createdAt result';
 
 function isScopedOrganizationId(organizationId?: string) {
   return Boolean(
@@ -122,19 +117,12 @@ function buildJobsQuery(
 }
 
 function mapJobListItem(doc: LeanDoc): JobListItem {
-  const { payload, ...rest } = doc as LeanDoc & {
-    payload?: { fileName?: string; requestFileUrl?: string };
-  };
   return {
-    ...rest,
+    ...doc,
     _id: String(doc._id),
     organizationId: doc.organizationId ? String(doc.organizationId) : '',
     errorLogs: doc.errorLogs ?? doc.errors ?? [],
     errors: doc.errorLogs ?? doc.errors ?? [],
-    // Presence of the stored file, not the path to it: the row only needs to know
-    // whether to offer the download, and what to call the file.
-    hasStudy: Boolean(payload?.requestFileUrl),
-    studyFileName: payload?.fileName ? String(payload.fileName) : undefined,
   } as JobListItem;
 }
 
@@ -204,7 +192,6 @@ type JobDetailLean = {
   status: JobStatus;
   createdAt: string | Date;
   updatedAt?: string | Date;
-  webhook?: JobWebhookOutcome;
   logs?: JobStepLog[];
   errorLogs?: JobErrorLog[];
   errors?: JobErrorLog[];
@@ -247,12 +234,10 @@ export async function getJobDetailForSession(
     status: job.status,
     createdAt: job.createdAt,
     updatedAt: job.updatedAt,
-    webhook: job.webhook,
     logs: job.logs ?? [],
     errorLogs: job.errorLogs ?? job.errors ?? [],
     result: job.result ?? undefined,
     // Live counters/timings a job kind writes as it runs (e.g. `progress.nfe`).
     progress: job.progress ?? undefined,
-    messages: [],
   };
 }

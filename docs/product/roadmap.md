@@ -15,17 +15,17 @@ PDV → venda → produto → ficha técnica → ingredientes → baixa/consumo 
 
 Sem vendas e consumo confiáveis, o resto fica comprometido. Integração inicial: Alloy.
 
-| Item                                                          | Estado                                                                   |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Sincronizar cardápio do Alloy (`pos.catalog.sync`)            | IMPLEMENTADO                                                             |
-| Ficha técnica e adicionais (manual) + custo e margem por item | IMPLEMENTADO (por código do PDV; ainda sem fichas na Loja Piloto)             |
-| Estoque por loja, movimentos, contagem, custo médio/real      | IMPLEMENTADO                                                             |
-| Captura de NF-e por XML/PDF, De/Para, rascunho de insumo      | IMPLEMENTADO                                                             |
-| SEFAZ ao vivo (`SEFAZ_SOURCE=live`)                           | PLANEJADO (hoje só fonte simulada; custódia do certificado indefinida)   |
-| Receber venda do Alloy (webhook + `pos.order.received`)       | IMPLEMENTADO (payload validado com pedidos reais; falta URL pública)     |
-| Baixa por receita e CMV real por venda                        | IMPLEMENTADO (testado em Mongo real; depende das fichas)                 |
-| Registrar compra manual (NFC-e / recibo)                      | IMPLEMENTADO                                                             |
-| Pedidos com ficha incompleta + reprocessar                    | IMPLEMENTADO                                                             |
+| Item                                                          | Estado                                                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Sincronizar cardápio do Alloy (`pos.catalog.sync`)            | IMPLEMENTADO                                                           |
+| Ficha técnica e adicionais (manual) + custo e margem por item | IMPLEMENTADO (por código do PDV; ainda sem fichas na Loja Piloto)      |
+| Estoque por loja, movimentos, contagem, custo médio/real      | IMPLEMENTADO                                                           |
+| Captura de NF-e por XML/PDF, De/Para, rascunho de insumo      | IMPLEMENTADO                                                           |
+| SEFAZ ao vivo (`SEFAZ_SOURCE=live`)                           | PLANEJADO (hoje só fonte simulada; custódia do certificado indefinida) |
+| Receber venda do Alloy (webhook + `pos.order.received`)       | IMPLEMENTADO (payload validado com pedidos reais; falta URL pública)   |
+| Baixa por receita e CMV real por venda                        | IMPLEMENTADO (testado em Mongo real; depende das fichas)               |
+| Registrar compra manual (NFC-e / recibo)                      | IMPLEMENTADO                                                           |
+| Pedidos com ficha incompleta + reprocessar                    | IMPLEMENTADO                                                           |
 
 ## Atualização (2026-10-10)
 
@@ -116,6 +116,7 @@ higiênico, toalha, sabão, fita, freezer…) tiveram o tipo corrigido de `food`
       ir para o complemento 802.
 
 **Casos de uso levantados em 06/10 (não construídos)** — a nota é emitida no dia da entrega:
+
 1. Entre a entrega e a nota o estoque fica abaixo do real → **estoque negativo falso** (contamina
    reconciliação e cobertura).
 2. **Risco de crédito em dobro**: "Registrar compra" na entrega + nota que chega depois pela SEFAZ.

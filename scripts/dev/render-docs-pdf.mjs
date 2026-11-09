@@ -16,7 +16,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const DOCS = [
   {
     source: 'docs/architecture/architecture.html',
-    output: 'docs/architecture/kairosflow-architecture.pdf',
+    output: 'docs/architecture/custeio-architecture.pdf',
   },
 ];
 
