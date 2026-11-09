@@ -1,0 +1,173 @@
+name: custeio
+
+services:
+  web:
+    container_name: custeio-web-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+    command: npm run dev -- -H 0.0.0.0 -p 3000 --webpack
+    ports:
+      - '3030:3000'
+    env_file:
+      - .env
+    environment:
+      AUTH_TRUST_HOST: 'true'
+      # Pin the Auth.js base URL so it never infers the 0.0.0.0 bind host and
+      # redirects the browser off-origin after login / password change.
+      AUTH_URL: 'http://localhost:3030'
+      # NOTE: WATCHPACK_POLLING/CHOKIDAR_USEPOLLING used to be set here because
+      # bind mounts on Docker Desktop (macOS) don't forward inotify events. On a
+      # native Linux host inotify works through the bind mount, so polling is
+      # just wasted wakeups. Re-add them if you ever run this stack on macOS.
+      PORT: 3000
+      APP_LOAD_UI: 'true'
+      APP_LOAD_HTTP: 'true'
+      APP_LOAD_ADMIN_API: 'true'
+      APP_LOAD_INGESTION_API: 'true'
+      APP_LOAD_GATEWAY_API: 'true'
+      APP_LOAD_JOBS: 'false'
+      # DEV storage is always Azurite unless DEV_AZURE_STORAGE_CONNECTION_STRING
+      # is set on purpose. Deliberately NOT interpolated from
+      # APP_AZURE_STORAGE_CONNECTION_STRING: .env may hold a real Azure account,
+      # and inheriting it here points the container at a different account than
+      # the host app (.env.local -> Azurite), so uploads and the worker end up in
+      # different places and the job dies with ContainerNotFound.
+      APP_AZURE_STORAGE_CONNECTION_STRING: ${DEV_AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite-custeio:10000/devstoreaccount1;}
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      REDIS_HOST: redis-custeio
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      azurite:
+        condition: service_started
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', 'scripts/healthcheck/app.js']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    container_name: custeio-worker-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+    command: npm run entrypoint
+    env_file:
+      - .env
+    environment:
+      APP_LOAD_UI: 'false'
+      APP_LOAD_HTTP: 'false'
+      APP_LOAD_ADMIN_API: 'false'
+      APP_LOAD_INGESTION_API: 'false'
+      APP_LOAD_GATEWAY_API: 'false'
+      APP_LOAD_JOBS: 'true'
+      # DEV storage is always Azurite unless DEV_AZURE_STORAGE_CONNECTION_STRING
+      # is set on purpose. Deliberately NOT interpolated from
+      # APP_AZURE_STORAGE_CONNECTION_STRING: .env may hold a real Azure account,
+      # and inheriting it here points the container at a different account than
+      # the host app (.env.local -> Azurite), so uploads and the worker end up in
+      # different places and the job dies with ContainerNotFound.
+      APP_AZURE_STORAGE_CONNECTION_STRING: ${DEV_AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite-custeio:10000/devstoreaccount1;}
+      REDIS_HOST: redis-custeio
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      azurite:
+        condition: service_started
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', 'scripts/healthcheck/worker.js']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    container_name: redis-custeio
+    image: redis/redis-stack-server:latest
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - '6400:6379'
+      - '8031:8001'
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    container_name: mongo-custeio
+    image: mongo:6.0
+    ports:
+      - '${MONGO_PORT_HOST:-27030}:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  azurite:
+    container_name: azurite-custeio
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    # -l /data is what makes the mounted volume actually hold the blobs. Without it
+    # Azurite writes to its workdir inside the container's writable layer, so the
+    # volume is dead weight and every `docker compose up` that recreates this
+    # container silently discards every uploaded file.
+    command: azurite-blob --blobHost 0.0.0.0 --loose --skipApiVersionCheck -l /data
+    ports:
+      - '${AZURITE_BLOB_PORT_HOST:-10020}:10000'
+    volumes:
+      - azurite_data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  azurite_data:

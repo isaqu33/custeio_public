@@ -1,0 +1,2 @@
+npm run verify
+npm run e2e:smoke

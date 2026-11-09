@@ -1,0 +1,184 @@
+@config '../tailwind.config.ts';
+@import 'tailwindcss';
+
+html,
+body {
+  scroll-behavior: smooth !important;
+}
+
+/* Compact mode — toggled from the user menu (see components/ui-density.tsx).
+   Everything is sized in rem, so shrinking the root font scales the whole UI. */
+html.compact {
+  font-size: 14px;
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: hsl(var(--border));
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer base {
+  :root {
+    /* Brand palette. These fallbacks track DEFAULT_BRAND_PALETTE in
+       app/lib/system-settings.ts, which is injected as an inline style on
+       <html> and wins over this block whenever it renders — both stay in
+       sync since the palette is fixed, not admin-editable. */
+    --brand-light-primary: 188 84% 30%;
+    --brand-light-secondary: 185 33% 92%;
+    --brand-light-accent: 187 30% 89%;
+    --brand-dark-primary: 185 47% 41%;
+    --brand-dark-secondary: 189 29% 15%;
+    --brand-dark-accent: 190 32% 12%;
+
+    /* Cool near-white ground so white cards lift off it. */
+    --background: 200 33% 98%;
+    --foreground: 200 24% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 24% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 24% 12%;
+    --primary: var(--brand-light-primary);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--brand-light-secondary);
+    --secondary-foreground: 188 72% 24%;
+    --muted: 200 24% 95%;
+    --muted-foreground: 200 10% 42%;
+    --accent: var(--brand-light-accent);
+    --accent-foreground: 188 72% 24%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 200 22% 89%;
+    --input: 200 22% 89%;
+    --ring: 188 75% 36%;
+    /* Categorical set for Recharts: blue · orange · green · amber · brand teal. */
+    --chart-1: 200 80% 52%;
+    --chart-2: 24 88% 58%;
+    --chart-3: 150 52% 44%;
+    --chart-4: 43 88% 57%;
+    --chart-5: 187 60% 40%;
+    --radius: 0.75rem;
+    /* Custeio wordmark: the "io" half of the built-in lockup. Follows the
+       theme like the rest of the lockup — darker teal here for the light
+       sidebar/login ground, lighter in .dark. */
+    --custeio-wordmark: 190 82% 29%;
+
+    /* Sidebar follows the theme (light here, navy in .dark). --sidebar-accent
+       is the active-page pill, a uniformly rounded fill a shade darker than
+       --sidebar-background (the wall) in both themes. The wall itself sits a
+       clear step below --card (100%) and --background (98%) so it reads as
+       its own panel instead of blending into the page, mirroring how the
+       dark wall (20%) pops off the near-black dark background (7%). */
+    --sidebar-background: 205 24% 91%;
+    --sidebar-foreground: 205 20% 30%;
+    --sidebar-primary: 185 58% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 205 28% 81%;
+    --sidebar-accent-foreground: 189 75% 26%;
+    --sidebar-border: 205 22% 85%;
+    --sidebar-ring: 185 55% 45%;
+
+    /* New AI Themes */
+    --primary-ia: 193.2 89% 21.2%;
+    /* #06546b em HSL */
+    --primary-ia-foreground: 0 0% 98%;
+
+    --primary-ia-light: 190.2 85% 20.2%;
+    /* #06546b em HSL */
+
+    --secondary-ia: 174 100% 30%;
+    /* #009688 */
+    --secondary-ia-foreground: 0 0% 100%;
+
+    --accent-ia: 34 100% 50%;
+    /* #ff9800 */
+    --accent-ia-foreground: 0 0% 100%;
+  }
+
+  .dark {
+    /* Deep teal-navy instead of pure slate; card sits a step lighter than the
+       ground so panels read without leaning on borders alone. */
+    --background: 200 30% 7%;
+    --foreground: 195 18% 96%;
+    --card: 200 26% 10%;
+    --card-foreground: 195 18% 96%;
+    --popover: 200 26% 10%;
+    --popover-foreground: 195 18% 96%;
+    --primary: var(--brand-dark-primary);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--brand-dark-secondary);
+    --secondary-foreground: 190 20% 90%;
+    --muted: 200 20% 16%;
+    --muted-foreground: 200 12% 62%;
+    --accent: var(--brand-dark-accent);
+    --accent-foreground: 184 48% 74%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 200 18% 17%;
+    --input: 200 18% 17%;
+    --ring: 185 45% 55%;
+    --chart-1: 200 74% 62%;
+    --chart-2: 24 82% 64%;
+    --chart-3: 150 48% 54%;
+    --chart-4: 43 82% 64%;
+    --chart-5: 184 56% 52%;
+    /* Lighter teal so "io" holds on the near-black dark login ground. */
+    --custeio-wordmark: 172 64% 58%;
+
+    /* Navy wall; --sidebar-accent (the active pill) stays darker than the wall
+       here too, same ~10pt margin as the light set above. */
+    --sidebar-background: 205 22% 20%;
+    --sidebar-foreground: 200 14% 82%;
+    --sidebar-primary: 185 58% 46%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 205 45% 10%;
+    --sidebar-accent-foreground: 181 62% 70%;
+    --sidebar-border: 205 20% 26%;
+    --sidebar-ring: 185 55% 50%;
+
+    /* New AI Themes (dark) */
+    --primary-ia: 193 100% 40%;
+    --primary-ia-foreground: 0 0% 100%;
+
+    --secondary-ia: 174 70% 40%;
+    --secondary-ia-foreground: 0 0% 100%;
+
+    --accent-ia: 34 100% 60%;
+    --accent-ia-foreground: 0 0% 15%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Tailwind's preflight resets buttons to cursor: default; restore the pointer
+     on every enabled interactive control (Button, raw <button>, checkbox, tabs,
+     select trigger, links styled as buttons). */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='checkbox']:not(:disabled),
+  [role='switch']:not(:disabled),
+  [role='tab']:not(:disabled),
+  [role='combobox']:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+}

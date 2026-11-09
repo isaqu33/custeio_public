@@ -1,0 +1,192 @@
+name: custeio
+
+# Every app service builds the same image, so the build args stay in one place.
+# The `NEXT_PUBLIC_SENTRY_*` values are inlined into the client bundle at build
+# time (a runtime env var would leave the browser with Sentry disabled); the
+# server-side `SENTRY_DSN` arrives at runtime through `.env`.
+x-app-build-args: &app-build-args
+  RUNTIME_BASE_IMAGE: ${RUNTIME_BASE_IMAGE:-kairosflow-runtime-base:node22}
+  NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+  NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE:-0}
+  NEXT_PUBLIC_SENTRY_REPLAY_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_REPLAY_SAMPLE_RATE:-0}
+  NEXT_PUBLIC_SENTRY_REPLAY_ON_ERROR_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_REPLAY_ON_ERROR_SAMPLE_RATE:-0}
+  SENTRY_ORG: ${SENTRY_ORG:-}
+  SENTRY_PROJECT: ${SENTRY_PROJECT:-}
+
+services:
+  web:
+    container_name: custeio-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args: *app-build-args
+    command: sh -c './node_modules/.bin/pm2-runtime start main.js --name app --node-args="${NODE_ARGS:-}"'
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      AUTH_TRUST_HOST: 'true'
+      PORT: 3000
+      APP_LOAD_UI: 'true'
+      APP_LOAD_HTTP: 'true'
+      APP_LOAD_ADMIN_API: 'true'
+      APP_LOAD_INGESTION_API: 'false'
+      APP_LOAD_GATEWAY_API: 'false'
+      APP_LOAD_JOBS: 'false'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      REDIS_HOST: redis-custeio
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
+    networks:
+      - app-network
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', 'scripts/healthcheck/app.js']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  ingestion-api:
+    container_name: custeio-ingestion-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args: *app-build-args
+    command: sh -c './node_modules/.bin/pm2-runtime start main.js --name app --node-args="${NODE_ARGS:-}"'
+    ports:
+      - '3001:3000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      AUTH_TRUST_HOST: 'true'
+      PORT: 3000
+      APP_LOAD_UI: 'false'
+      APP_LOAD_HTTP: 'true'
+      APP_LOAD_ADMIN_API: 'false'
+      APP_LOAD_INGESTION_API: 'true'
+      APP_LOAD_GATEWAY_API: 'true'
+      APP_LOAD_JOBS: 'false'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+      REDIS_HOST: redis-custeio
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
+    networks:
+      - app-network
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', 'scripts/healthcheck/app.js']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    container_name: custeio-worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args: *app-build-args
+    # Cap V8's heap below the container limit so a runaway batch fails with a
+    # clean "JS heap out of memory" (which Bull retries with the checkpoint) instead
+    # of the kernel SIGKILL-ing the process — V8 otherwise sizes its heap off host
+    # RAM, not the cgroup limit. Keep it a few hundred MB under mem_limit for off-heap
+    # buffers + baseline; raise both together. Override via NODE_ARGS.
+    command: sh -c './node_modules/.bin/pm2-runtime start main.js --name app --node-args="${NODE_ARGS:---max-old-space-size=600}"'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      APP_LOAD_UI: 'false'
+      APP_LOAD_HTTP: 'false'
+      APP_LOAD_ADMIN_API: 'false'
+      APP_LOAD_INGESTION_API: 'false'
+      APP_LOAD_GATEWAY_API: 'false'
+      APP_LOAD_JOBS: 'true'
+      REDIS_HOST: redis-custeio
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: 'redis://:${REDIS_PASSWORD}@redis-custeio:6379'
+      DATABASE_URL: 'mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-custeio:27017/kairosflow?authSource=admin'
+    networks:
+      - app-network
+    restart: always
+    # The worker is the only service whose memory scales with the workload. Peak RSS
+    # is roughly APP_BULL_WORKER_CONCURRENCY × APP_AI_LEAF_CONCURRENCY × batch size
+    # × payload size × ~2.7 while a batch is held in memory during a provider call.
+    # --max-old-space-size (see the worker command) bounds the on-heap part below
+    # this limit; the limit itself is the backstop so that over-provisioned knobs
+    # surface as a clean OOM on one job rather than the host killing whichever
+    # process it picks. Raise it in step with the knobs.
+    mem_limit: ${APP_WORKER_MEM_LIMIT:-768m}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', 'scripts/healthcheck/worker.js']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    container_name: redis-custeio
+    image: redis/redis-stack-server:latest
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - '6380:6379'
+      - '8001:8001'
+    networks:
+      - app-network
+    restart: always
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    container_name: mongo-custeio
+    image: mongo:6.0
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+    restart: always
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:

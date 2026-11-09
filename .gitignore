@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Next.js / build output
+.next/
+**/.next/
+out/
+build/
+**/build/
+dist/
+**/dist/
+.swc/
+*.tsbuildinfo
+**/*.tsbuildinfo
+next-env.d.ts
+
+# Env files (contain secrets) — keep only *.example templates
+.env
+.env.*
+!.env.example
+!.env.docker.example
+!.env.linux.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Testing / coverage
+coverage/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+e2e/.auth/
+e2e/playwright-report/
+e2e/test-results/
+
+# Misc runtime / temp
+*.pid
+*.seed
+*.pid.lock
+
+# OS / editor
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.idea/
+
+# AppleDouble junk from exFAT drives
+._*
+**/._*
+
+# Sentry
+.sentryclirc
+
+# Playwright MCP output (snapshots/screenshots/console logs)
+.playwright-mcp/

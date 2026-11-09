@@ -1,0 +1,18 @@
+.git
+.next/
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.DS_Store
+._*
+README.md
+CLAUDE.md
+azure.deployment.md
+docker-compose*.yml
+e2e/
+
+# Secrets — never enter the build context
+.env
+.env.local
+.env.*.local

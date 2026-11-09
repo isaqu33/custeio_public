@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>KairosFlow — Architecture</title>
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 11mm 12mm;
+      }
+
+      :root {
+        --ink: #0f172a;
+        --ink-soft: #475569;
+        --ink-faint: #94a3b8;
+        --line: #cbd5e1;
+        --line-soft: #e2e8f0;
+        --paper: #ffffff;
+        --wash: #f8fafc;
+        --blue: #0f766e;
+        --blue-wash: #f0fdfa;
+        --green: #047857;
+        --green-wash: #ecfdf5;
+        --amber: #b45309;
+        --amber-wash: #fffbeb;
+        --red: #b91c1c;
+        --red-wash: #fef2f2;
+        --violet: #6d28d9;
+        --violet-wash: #f5f3ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+        font-size: 10px;
+        line-height: 1.45;
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      code,
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+        font-size: 0.94em;
+      }
+
+      .page {
+        page-break-after: always;
+        break-after: page;
+        display: flex;
+        flex-direction: column;
+        min-height: 175mm;
+      }
+
+      .page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      header.page-head {
+        border-bottom: 1.5px solid var(--ink);
+        padding-bottom: 5px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      header.page-head h1 {
+        font-size: 17px;
+        margin: 0;
+        letter-spacing: -0.2px;
+      }
+
+      header.page-head .kicker {
+        font-size: 8.5px;
+        text-transform: uppercase;
+        letter-spacing: 1.3px;
+        color: var(--ink-faint);
+        font-weight: 700;
+      }
+
+      header.page-head .sub {
+        margin: 2px 0 0;
+        font-size: 10px;
+        color: var(--ink-soft);
+        max-width: 150mm;
+      }
+
+      footer.page-foot {
+        margin-top: auto;
+        padding-top: 6px;
+        border-top: 1px solid var(--line-soft);
+        display: flex;
+        justify-content: space-between;
+        font-size: 8px;
+        color: var(--ink-faint);
+        letter-spacing: 0.3px;
+      }
+
+      /* ---------- boxes & flow ---------- */
+
+      .row {
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .grow {
+        flex: 1;
+      }
+
+      .node {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--paper);
+        padding: 7px 9px;
+      }
+
+      .node h4 {
+        margin: 0 0 3px;
+        font-size: 10.5px;
+        letter-spacing: -0.1px;
+      }
+
+      .node p {
+        margin: 0;
+        font-size: 8.8px;
+        color: var(--ink-soft);
+      }
+
+      .node .tag {
+        display: inline-block;
+        font-size: 7.5px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--ink-faint);
+        margin-bottom: 2px;
+      }
+
+      .node.blue {
+        border-color: #99f6e4;
+        background: var(--blue-wash);
+      }
+      .node.blue h4 {
+        color: var(--blue);
+      }
+      .node.green {
+        border-color: #a7f3d0;
+        background: var(--green-wash);
+      }
+      .node.green h4 {
+        color: var(--green);
+      }
+      .node.amber {
+        border-color: #fde68a;
+        background: var(--amber-wash);
+      }
+      .node.amber h4 {
+        color: var(--amber);
+      }
+      .node.violet {
+        border-color: #ddd6fe;
+        background: var(--violet-wash);
+      }
+      .node.violet h4 {
+        color: var(--violet);
+      }
+      .node.red {
+        border-color: #fecaca;
+        background: var(--red-wash);
+      }
+      .node.red h4 {
+        color: var(--red);
+      }
+      .node.wash {
+        background: var(--wash);
+      }
+      .node.dashed {
+        border-style: dashed;
+      }
+
+      .group {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+        background: var(--wash);
+      }
+
+      .group > .legend {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 6px;
+      }
+
+      .arrow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 62px;
+        color: var(--ink-soft);
+        font-size: 8px;
+        text-align: center;
+        line-height: 1.25;
+      }
+
+      .arrow .glyph {
+        font-size: 14px;
+        line-height: 1;
+        color: var(--ink);
+      }
+
+      .arrow.down {
+        min-width: 0;
+        padding: 1px 0;
+      }
+
+      .lbl {
+        font-size: 7.8px;
+        color: var(--ink-soft);
+      }
+
+      /* ---------- tables ---------- */
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8.9px;
+      }
+
+      th {
+        text-align: left;
+        font-size: 7.8px;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        border-bottom: 1px solid var(--line);
+        padding: 4px 6px;
+      }
+
+      td {
+        border-bottom: 1px solid var(--line-soft);
+        padding: 4px 6px;
+        vertical-align: top;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      td.mono,
+      th.mono {
+        white-space: nowrap;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.5px 5px;
+        border-radius: 999px;
+        font-size: 7.5px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+      }
+      .pill.get {
+        color: var(--green);
+        border-color: #a7f3d0;
+        background: var(--green-wash);
+      }
+      .pill.post {
+        color: var(--blue);
+        border-color: #99f6e4;
+        background: var(--blue-wash);
+      }
+      .pill.token {
+        color: var(--amber);
+        border-color: #fde68a;
+        background: var(--amber-wash);
+      }
+      .pill.session {
+        color: var(--violet);
+        border-color: #ddd6fe;
+        background: var(--violet-wash);
+      }
+      .pill.public {
+        color: var(--ink-soft);
+      }
+
+      h3.sec {
+        font-size: 10px;
+        margin: 0 0 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ink-faint);
+      }
+
+      ul.tight {
+        margin: 0;
+        padding-left: 13px;
+      }
+
+      ul.tight li {
+        margin-bottom: 2.5px;
+        font-size: 8.9px;
+        color: var(--ink-soft);
+      }
+
+      ul.tight li b {
+        color: var(--ink);
+      }
+
+      .note {
+        border-left: 2.5px solid var(--ink);
+        padding: 4px 0 4px 8px;
+        font-size: 9px;
+        color: var(--ink-soft);
+      }
+
+      .cover {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 165mm;
+      }
+
+      .cover h1 {
+        font-size: 34px;
+        margin: 0;
+        letter-spacing: -1px;
+      }
+
+      .cover .lead {
+        font-size: 12px;
+        color: var(--ink-soft);
+        max-width: 165mm;
+        margin: 8px 0 0;
+      }
+
+      .cover .rule {
+        height: 3px;
+        width: 70px;
+        background: var(--ink);
+        margin: 16px 0;
+      }
+
+      .toc {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px 22px;
+        max-width: 190mm;
+      }
+
+      .toc div {
+        display: flex;
+        gap: 8px;
+        font-size: 9.5px;
+        border-bottom: 1px dotted var(--line);
+        padding-bottom: 3px;
+      }
+
+      .toc span.n {
+        font-weight: 700;
+        color: var(--ink-faint);
+        width: 14px;
+      }
+
+      .seq {
+        display: grid;
+        grid-template-columns: 16px 1fr;
+        gap: 0 8px;
+      }
+
+      .seq .step-n {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--paper);
+        background: var(--ink);
+        border-radius: 999px;
+        width: 15px;
+        height: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 3px;
+      }
+
+      .seq .step {
+        padding-bottom: 7px;
+        border-left: 1px solid var(--line-soft);
+        margin-left: -14px;
+        padding-left: 22px;
+      }
+
+      .seq .step:last-child {
+        border-left-color: transparent;
+      }
+
+      .seq .step h5 {
+        margin: 2px 0 1px;
+        font-size: 9.6px;
+      }
+
+      .seq .step p {
+        margin: 0;
+        font-size: 8.7px;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===================== 1. TOPOLOGY ===================== -->
+    <section class="page">
+      <header class="page-head">
+        <div>
+          <div class="kicker">KairosFlow · Architecture · 1 of 5</div>
+          <h1>Topology: what runs where</h1>
+          <p class="sub">
+            One Docker image starts in three roles, chosen by <code>APP_LOAD_*</code> flags. Mongo
+            holds the state, Redis only coordinates, Blob storage holds files.
+          </p>
+        </div>
+        <div class="lbl" style="text-align: right">
+          <span class="pill get">exists today</span>&nbsp;
+          <span class="pill token">planned — design only</span>
+        </div>
+      </header>
+
+      <div class="row" style="flex: 1">
+        <div class="col" style="width: 52mm">
+          <div class="group grow">
+            <div class="legend">Outside — who talks to us</div>
+            <div class="col">
+              <div class="node amber dashed">
+                <span class="tag">POS</span>
+                <h4>Alloy</h4>
+                <p>
+                  Order webhook (3 s timeout) + catalog REST. Store token +
+                  <code>integrador-token</code>. 2 req/min per store.
+                </p>
+              </div>
+              <div class="node amber dashed">
+                <span class="tag">Tax authority</span>
+                <h4>SEFAZ (DF-e Distribution)</h4>
+                <p>
+                  SOAP + mTLS with each store's e-CNPJ A1 certificate. Polling only — there is no
+                  NFe webhook.
+                </p>
+              </div>
+              <div class="node amber dashed">
+                <span class="tag">Messaging</span>
+                <h4>WhatsApp (Meta Cloud API)</h4>
+                <p>
+                  One KairosFlow number; each message is routed by
+                  <code>Stores.whatsappNumber</code>.
+                </p>
+              </div>
+              <div class="node green">
+                <span class="tag">Operator</span>
+                <h4>Browser (System/Support)</h4>
+                <p>Credentials login, JWT session in a cookie.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <span class="glyph">⇄</span>
+          <span>HTTPS</span>
+        </div>
+
+        <div class="col grow">
+          <div class="group">
+            <div class="legend">One image, three roles (<code>APP_LOAD_*</code>)</div>
+            <div class="row">
+              <div class="node blue grow">
+                <span class="tag">container · kairosflow-web</span>
+                <h4>Web — UI + admin API</h4>
+                <p>
+                  Next.js 16. <code>APP_LOAD_UI</code> and <code>APP_LOAD_ADMIN_API</code> on.
+                  <code>/organization</code> and <code>/system</code> pages,
+                  <code>/api/*</code> routes, health at <code>/api/health/*</code>.
+                </p>
+              </div>
+              <div class="node blue grow dashed">
+                <span class="tag">container · kairosflow-ingestion-api</span>
+                <h4>Ingestion — webhooks</h4>
+                <p>
+                  Same image, UI off. It exists in the production compose file, but
+                  <b>serves no domain route today</b>: it will receive the Alloy and Meta webhooks.
+                  See the callout below.
+                </p>
+              </div>
+              <div class="node blue grow">
+                <span class="tag">container · kairosflow-worker</span>
+                <h4>Worker — Bull consumer</h4>
+                <p>
+                  <code>APP_LOAD_JOBS</code>: runs <code>scripts/worker.ts</code>, concurrency
+                  <code>APP_BULL_WORKER_CONCURRENCY</code> (3). File heartbeat + HTTP health on
+                  :8081.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="arrow down grow">
+              <span class="glyph">↓</span><span class="lbl">domain documents</span>
+            </div>
+            <div class="arrow down grow">
+              <span class="glyph">↓</span
+              ><span class="lbl">enqueues <code>{ jobId }</code> / rate limits</span>
+            </div>
+            <div class="arrow down grow">
+              <span class="glyph">↓</span
+              ><span class="lbl">export CSVs, future <code>.pfx</code></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="node violet grow">
+              <span class="tag">container · mongo-kairosflow</span>
+              <h4>MongoDB 6</h4>
+              <p>
+                State for everything: Organizations, Stores, domain data, Jobs, AuditEvents,
+                SystemSettings.
+              </p>
+            </div>
+            <div class="node violet grow">
+              <span class="tag">container · redis-kairosflow</span>
+              <h4>Redis</h4>
+              <p>
+                Coordination, not storage. The <code>custeio-jobs</code> queue, rate-limit
+                counters, liveness.
+              </p>
+            </div>
+            <div class="node violet grow">
+              <span class="tag">azurite (dev) / Azure Blob (prod)</span>
+              <h4>Blob Storage</h4>
+              <p>
+                Branding (<code>system/</code>, public through the proxy), results of the export
+                jobs.
+              </p>
+            </div>
+          </div>
+
+          <div class="note">
+            <b>Callout (webhooks).</b> Role-based routing (<code>classifyRuntimeRoute</code>) only
+            recognizes <code>/api/v1/*</code> as “ingestion” — a prefix kept from the boilerplate, with
+            no routes today. The Alloy and Meta webhooks need a prefix classified as ingestion, or
+            they fall into the admin API. They carry no session cookie and no <code>Origin</code>,
+            so they get past the CSRF check in <code>proxy.ts</code> (it only applies to requests
+            with a cookie), but each needs its own authentication: the provider's secret/signature,
+            never a session.
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-foot">
+        <span
+          >Sources: docker-compose.prod.yml · app/lib/runtime-roles.ts · scripts/entrypoint.ts ·
+          proxy.ts</span
+        >
+        <span>KairosFlow — generated from docs/architecture/architecture.html</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 2. REDIS / MONGO ===================== -->
+    <section class="page">
+      <header class="page-head">
+        <div>
+          <div class="kicker">KairosFlow · Architecture · 2 of 5</div>
+          <h1>What lives where — and what happens if it goes down</h1>
+          <p class="sub">
+            Rule: nothing that cannot be rebuilt lives only in Redis. The job document is in Mongo;
+            the queue carries just the <code>jobId</code>.
+          </p>
+        </div>
+      </header>
+
+      <div class="row" style="flex: 1">
+        <div class="col grow">
+          <h3 class="sec">Redis — coordination</h3>
+          <table>
+            <tr>
+              <th>What</th>
+              <th>Detail</th>
+              <th>If Redis goes down</th>
+            </tr>
+            <tr>
+              <td><b>Bull queue</b> <code>custeio-jobs</code></td>
+              <td>
+                Payload <code>{ jobId }</code>; the job document lives in Mongo.
+              </td>
+              <td>No enqueueing or consuming. Jobs already written to Mongo are not lost.</td>
+            </tr>
+            <tr>
+              <td><b>Rate limit</b></td>
+              <td>
+                Fixed window per (scope, IP), key <code>rate:&lt;scope&gt;</code>. 2 s timeout.
+              </td>
+              <td>
+                <b>Fails open</b> — requests pass; the operator has to watch the
+                <code>rate-limit redis error</code> log.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Liveness</b></td>
+              <td>
+                Health probe <code>PING</code>, worker heartbeat, queue-depth sampling (every 60 s).
+              </td>
+              <td>The <code>/health/ready</code> probe returns 503.</td>
+            </tr>
+          </table>
+          <p class="lbl" style="margin-top: 4px">
+            Sessions are <b>not</b> in Redis: NextAuth uses the JWT strategy, so the session is the
+            <code>authjs.session-token</code> cookie.
+          </p>
+        </div>
+
+        <div class="col grow">
+          <h3 class="sec">MongoDB — state</h3>
+          <table>
+            <tr>
+              <th>Collection (model)</th>
+              <th>Role</th>
+              <th>Scope</th>
+            </tr>
+            <tr>
+              <td class="mono">organizations</td>
+              <td>The paying Cliente: identity, onboarding, billing, invite</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="mono">stores</td>
+              <td>The Loja: 1 CNPJ ↔ 1 POS account; POS credential; WhatsApp</td>
+              <td><code>organizationId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">rawingredients</td>
+              <td>
+                Ingredient: <code>currentStock</code>, <code>averageCost</code>,
+                <code>minAlertStock</code>
+              </td>
+              <td><code>storeId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">partnerproducts</td>
+              <td>
+                POS product + recipe (<code>recipe</code>) and add-ons (<code>modifiers</code>)
+              </td>
+              <td><code>storeId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">supplieritemmappings</td>
+              <td>Tax mapping: (supplier, <code>cProd</code>) → ingredient + factor</td>
+              <td><code>storeId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">processedinvoices</td>
+              <td>Idempotency guard per NFe access key</td>
+              <td><code>storeId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">orders</td>
+              <td>
+                A sale: <code>calculatedCost</code> and <code>profitMargin</code> written at sale
+                time
+              </td>
+              <td><code>storeId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">jobs</td>
+              <td>State, logs, attempts and result of each Bull execution</td>
+              <td><code>organizationId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">auditevents</td>
+              <td>Who did what; failures too</td>
+              <td><code>organizationId</code></td>
+            </tr>
+            <tr>
+              <td class="mono">users · systemsettings</td>
+              <td>
+                Accounts and links (<code>organizationIds</code>, <code>systemLevel</code>);
+                platform branding
+              </td>
+              <td>—</td>
+            </tr>
+          </table>
+          <div class="note" style="margin-top: 6px">
+            The five domain models exist; <b>no job writes to them yet</b>. Stock, recipes and
+            orders are per <b>store</b> — stock, menu and sales belong to a physical unit, not to
+            the client.
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-foot">
+        <span>Sources: app/lib/bull/queue.ts · app/lib/rate-limit.ts · app/models/*</span>
+        <span>KairosFlow</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 3. THE JOBS ===================== -->
+    <section class="page">
+      <header class="page-head">
+        <div>
+          <div class="kicker">KairosFlow · Architecture · 3 of 5</div>
+          <h1>The jobs: two exist, four are the product</h1>
+          <p class="sub">
+            Every asynchronous execution is a row in <code>jobs</code> + a Bull entry. Adding a kind
+            touches four places (type, payload schema, handler registry, creation route); a test
+            fails if the tables drift apart.
+          </p>
+        </div>
+      </header>
+
+      <div style="flex: 1">
+        <table>
+          <tr>
+            <th>Job</th>
+            <th>Trigger</th>
+            <th>Reads</th>
+            <th>Writes</th>
+            <th>Cadence / limit</th>
+            <th>State</th>
+          </tr>
+          <tr>
+            <td class="mono"><b>pos.catalog.sync</b></td>
+            <td>Operator action or scheduled (cadence to be defined)</td>
+            <td>Alloy <code>getproducts</code> (+ <code>getitem</code>)</td>
+            <td>
+              <code>PartnerProducts</code> — <b>never</b> touches
+              <code>recipe</code>/<code>modifiers</code>, which are typed by hand
+            </td>
+            <td>2 req/min per store token</td>
+            <td><span class="pill token">planned</span></td>
+          </tr>
+          <tr>
+            <td class="mono"><b>pos.order.received</b></td>
+            <td>
+              Alloy webhook (enqueue and answer at once); <code>getorders</code> as a safety net
+            </td>
+            <td>Order payload (format <b>not yet confirmed</b>)</td>
+            <td><code>RawIngredients</code> (debit), <code>Orders</code></td>
+            <td>Webhook: answer in 3 s, resent after 5 min; events may be duplicated</td>
+            <td><span class="pill token">planned</span></td>
+          </tr>
+          <tr>
+            <td class="mono"><b>sefaz.nfe.received</b></td>
+            <td>Scheduled poll per store (~every 3 h)</td>
+            <td>
+              <code>NFeDistribuicaoDFe</code> (<code>distNSU</code>) +
+              <code>NFeRecepcaoEvento</code> manifestation
+            </td>
+            <td>
+              <code>RawIngredients</code> (credit + average cost), <code>ProcessedInvoices</code>
+            </td>
+            <td>
+              ≤ 50 docs/call; ~1 h minimum between queries per CNPJ; <code>cStat 656</code> = 1 h
+              block
+            </td>
+            <td><span class="pill token">planned</span></td>
+          </tr>
+          <tr>
+            <td class="mono"><b>whatsapp.message.incoming</b></td>
+            <td>Meta webhook</td>
+            <td>
+              <code>Stores.whatsappNumber</code>, <code>RawIngredients</code>, <code>Orders</code>
+            </td>
+            <td>Reply to the owner, inside the 24 h window</td>
+            <td>A proactive alert outside the window needs an approved template</td>
+            <td><span class="pill token">planned</span></td>
+          </tr>
+          <tr>
+            <td class="mono">users.export.csv</td>
+            <td>Operator, on the Jobs page</td>
+            <td>Users, Organizations</td>
+            <td>CSV in Blob</td>
+            <td>1 attempt</td>
+            <td><span class="pill get">exists</span></td>
+          </tr>
+          <tr>
+            <td class="mono">organizations.export.csv</td>
+            <td>Operator, on the Jobs page</td>
+            <td>Organizations</td>
+            <td>CSV in Blob</td>
+            <td>1 attempt</td>
+            <td><span class="pill get">exists</span></td>
+          </tr>
+        </table>
+
+        <div class="row" style="margin-top: 10px">
+          <div class="node wash grow">
+            <h4>Life of a job</h4>
+            <div class="seq" style="margin-top: 4px">
+              <span class="step-n">1</span>
+              <div class="step">
+                <b>Create</b> the document in <code>jobs</code> (<code>queued</code>) and enqueue
+                <code>{ jobId }</code>.
+              </div>
+              <span class="step-n">2</span>
+              <div class="step">
+                <b>Worker</b> validates the payload against <code>jobPayloadSchemas[kind]</code> and
+                calls the registry handler.
+              </div>
+              <span class="step-n">3</span>
+              <div class="step">
+                <b>Write</b> logs, result and <code>progress.timings</code>; a permanent failure
+                (<code>PermanentJobError</code>) is not re-enqueued.
+              </div>
+              <span class="step-n">4</span>
+              <div class="step">
+                <b>Failed?</b> Exponential retry for jobs with more than 1 attempt
+                (<code>APP_BULL_*</code>); the operator can re-enqueue from the page — audited as
+                <code>job.retry</code>.
+              </div>
+            </div>
+          </div>
+          <div class="node wash grow">
+            <h4>Why the webhook only enqueues</h4>
+            <p>
+              Alloy allows 3 seconds to answer and disables the webhook after many invalid answers.
+              The route validates authenticity, writes the <code>Job</code>, enqueues and answers
+              <code>{"status":"ok"}</code>; the heavy work (stock debit) runs in the worker.
+              Duplicated events are absorbed by the unique index
+              <code>(storeId, externalOrderId)</code> on <code>Orders</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-foot">
+        <span
+          >Sources: docs/features/{jobs, alloy-api, sefaz-nfe, whatsapp-quick-query,
+          stock-and-cmv}.md · app/jobs/registry.ts</span
+        >
+        <span>KairosFlow</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 4. STOCK AND CMV ===================== -->
+    <section class="page">
+      <header class="page-head">
+        <div>
+          <div class="kicker">KairosFlow · Architecture · 4 of 5</div>
+          <h1>Data flow: a purchase credits, a sale debits</h1>
+          <p class="sub">
+            The heart of the product. Two halves that meet in <code>RawIngredients</code>: the
+            purchase moves the average cost; the sale consumes it and fixes the order's real CMV.
+          </p>
+        </div>
+      </header>
+
+      <div class="row" style="flex: 1">
+        <div class="col grow">
+          <h3 class="sec">Half 1 — <code>sefaz.nfe.received</code> (credits)</h3>
+          <div class="seq">
+            <span class="step-n">1</span>
+            <div class="step">
+              Downloads the full NFe XML (after manifesting Ciência da Operação) and checks
+              <code>ProcessedInvoices</code> by access key.
+            </div>
+            <span class="step-n">2</span>
+            <div class="step">
+              For each <code>det/prod</code>: looks up <code>SupplierItemMappings</code> by (store,
+              issuer CNPJ, <code>cProd</code>).
+            </div>
+            <span class="step-n">3</span>
+            <div class="step">
+              <b>No match</b> → pending manual mapping (no AI in the MVP). <b>Match</b> → converts
+              and rolls the average cost:
+            </div>
+          </div>
+          <div class="node wash mono" style="font-size: 8.6px; line-height: 1.6">
+            convertedQty = qCom × conversionFactor<br />
+            newAverageCost = (currentStock × averageCost + vProd) / (currentStock + convertedQty)<br />
+            newCurrentStock = currentStock + convertedQty
+          </div>
+          <p class="lbl">
+            Uses <code>vProd</code> (the line total) directly so it does not round twice.
+          </p>
+        </div>
+
+        <div class="col grow">
+          <h3 class="sec">Half 2 — <code>pos.order.received</code> (debits)</h3>
+          <div class="seq">
+            <span class="step-n">1</span>
+            <div class="step">
+              <b>Idempotency:</b> unique index <code>(storeId, externalOrderId)</code>; reprocessing
+              an order is a no-op.
+            </div>
+            <span class="step-n">2</span>
+            <div class="step">
+              Resolves each item in <code>PartnerProducts</code> by (store,
+              <code>externalId</code>).
+            </div>
+            <span class="step-n">3</span>
+            <div class="step">
+              Aggregates the recipe: <code>recipe</code> × quantity <b>+</b> each add-on's
+              <code>modifier.recipe</code>.
+            </div>
+            <span class="step-n">4</span>
+            <div class="step">
+              Debits each ingredient <b>atomically</b> (<code>findOneAndUpdate</code> with a
+              negative <code>$inc</code>) and reads <code>averageCost</code> from the
+              <b>same returned document</b> — no second query, no race with a purchase.
+            </div>
+            <span class="step-n">5</span>
+            <div class="step">
+              Writes the <code>Order</code>; if <code>currentStock &lt; minAlertStock</code> (and
+              &gt; 0), enqueues the alert.
+            </div>
+          </div>
+          <div class="node wash mono" style="font-size: 8.6px; line-height: 1.6">
+            calculatedCost = Σ (debited qty × averageCost read)<br />
+            profitMargin = (totalValue − calculatedCost) / totalValue
+          </div>
+        </div>
+
+        <div class="col" style="width: 62mm">
+          <h3 class="sec">Decisions already made</h3>
+          <ul class="tight">
+            <li>
+              <b>Stock may go negative.</b> It is a sign of an unrecorded purchase or a wrong recipe
+              — a discrepancy datum, not an error that blocks a sale.
+            </li>
+            <li>
+              <b>A sale with no recipe</b> writes <code>calculatedCost = 0</code>, margin 1; the
+              dashboard flags it later.
+            </li>
+            <li><b>No AI in the mapping</b> for the MVP: manual mapping.</li>
+            <li><b>CMV is written at sale time</b> and never recalculated.</li>
+          </ul>
+          <h3 class="sec" style="margin-top: 8px">Still open</h3>
+          <ul class="tight">
+            <li>
+              Where an NFe line <b>with no mapping</b> becomes visible to the owner (<code
+                >ProcessedInvoices</code
+              >
+              only holds the header).
+            </li>
+            <li>The real Alloy order payload, and whether an add-on can have quantity &gt; 1.</li>
+            <li>
+              Order of “insert <code>Order</code> → debit” vs. “debit → insert”, so an attempt that
+              fails to write the order does not debit stock.
+            </li>
+            <li>
+              The first sale of a never-bought ingredient has an artificially perfect CMV (<code
+                >averageCost = 0</code
+              >).
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <footer class="page-foot">
+        <span
+          >Source: docs/features/stock-and-cmv.md (design of 2026-09-18; neither job
+          implemented)</span
+        >
+        <span>KairosFlow</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 5. TENANCY, SECRETS, LIMITS ===================== -->
+    <section class="page">
+      <header class="page-head">
+        <div>
+          <div class="kicker">KairosFlow · Architecture · 5 of 5</div>
+          <h1>Multi-tenancy, secrets and limits</h1>
+          <p class="sub">
+            Cliente → Loja → domain data. Each credential lives where its natural scope lives.
+          </p>
+        </div>
+      </header>
+
+      <div class="row" style="flex: 1">
+        <div class="col grow">
+          <h3 class="sec">Hierarchy and scope</h3>
+          <div class="node green">
+            <span class="tag">Cliente (tenant, who pays)</span>
+            <h4>Organization</h4>
+            <p>
+              Users (<code>Users.organizationIds</code>), billing (Asaas), status
+              <code>onboarding</code> · <code>active</code> · <code>suspended</code> ·
+              <code>canceled</code>, invite link.
+            </p>
+          </div>
+          <div class="arrow down"><span class="glyph">↓ 1 : N</span></div>
+          <div class="node blue">
+            <span class="tag">Loja (1 CNPJ ↔ 1 POS account)</span>
+            <h4>Store</h4>
+            <p>
+              CNPJ unique in the system, <code>provider</code>, <code>externalId</code>,
+              <code>apiKey</code> (write-only), <code>whatsappNumber</code>.
+            </p>
+          </div>
+          <div class="arrow down"><span class="glyph">↓ 1 : N</span></div>
+          <div class="node violet">
+            <span class="tag">Domain — always by <code>storeId</code></span>
+            <h4>
+              RawIngredients · PartnerProducts · SupplierItemMappings · ProcessedInvoices · Orders
+            </h4>
+          </div>
+          <div class="note" style="margin-top: 6px">
+            <b>Rule:</b> every read and write is scoped by the validated id —
+            <code>getAuthorizedOrganizationIds</code> only narrows, never widens. Access to
+            <code>/system/*</code> is <code>Users.systemLevel</code> alone; there are no groups or
+            roles.
+          </div>
+        </div>
+
+        <div class="col grow">
+          <h3 class="sec">Secrets</h3>
+          <table>
+            <tr>
+              <th>Secret</th>
+              <th>Where it lives</th>
+              <th>State</th>
+            </tr>
+            <tr>
+              <td><code>Stores.apiKey</code> (Alloy store token)</td>
+              <td>
+                Mongo, <b>AES-256-GCM</b> with a random IV; key in
+                <code>APP_SECRETS_ENCRYPTION_KEY</code>; never returned to the client
+              </td>
+              <td><span class="pill get">exists</span></td>
+            </tr>
+            <tr>
+              <td><code>ALLOY_INTEGRATOR_TOKEN</code></td>
+              <td>Environment variable — one value for the whole installation, not per store</td>
+              <td><span class="pill get">exists</span></td>
+            </tr>
+            <tr>
+              <td>e-CNPJ A1 (<code>.pfx</code> + password)</td>
+              <td>
+                Direction discussed: <code>.pfx</code> in Blob and the password in a different trust
+                boundary (e.g. Key Vault); <b>not decided</b>
+              </td>
+              <td><span class="pill token">open</span></td>
+            </tr>
+            <tr>
+              <td>Webhook signature (Alloy, Meta)</td>
+              <td>
+                To be defined per provider; Alloy only documents a callback URL and a
+                <code>{"status":"ok"}</code> answer
+              </td>
+              <td><span class="pill token">open</span></td>
+            </tr>
+          </table>
+          <p class="lbl" style="margin-top: 4px">
+            The e-CNPJ leaks worse than any other credential: it lets someone <b>sign</b> tax
+            documents on the client's behalf, not just read. We investigated Procuração Eletrônica
+            to avoid custody — the SEFAZ webservice does not consult it; holding each store's A1
+            remains the design.
+          </p>
+
+          <h3 class="sec" style="margin-top: 8px">Limits that shape the design</h3>
+          <table>
+            <tr>
+              <th>System</th>
+              <th>Limit</th>
+              <th>Consequence</th>
+            </tr>
+            <tr>
+              <td>Alloy REST</td>
+              <td>2 req/min per store token</td>
+              <td>Catalog sync spaced out; <code>getorders</code> only as a safety net</td>
+            </tr>
+            <tr>
+              <td>Alloy webhook</td>
+              <td>Answer in 3 s; resent after 5 min</td>
+              <td>The route only enqueues; idempotent consumer</td>
+            </tr>
+            <tr>
+              <td>SEFAZ</td>
+              <td>~1 h per CNPJ; 50 docs/call; <code>656</code> = 1 h block</td>
+              <td>
+                The job is scheduled polling, with a per-store NSU cursor (no field for it yet)
+              </td>
+            </tr>
+            <tr>
+              <td>WhatsApp</td>
+              <td>24 h window; template for proactive</td>
+              <td>
+                An owner-initiated query answers without a template; a proactive alert needs an
+                approved <code>utility</code> one. From 2026-10-01 both are charged (~R$0.03–0.05)
+              </td>
+            </tr>
+            <tr>
+              <td>App</td>
+              <td>Rate limit 120/min (10/min on login); Bull 3 concurrent jobs</td>
+              <td>Fails open if Redis goes down</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="note">
+        <b>WhatsApp API.</b> KairosFlow uses the official Meta Cloud API, not Evolution API (which
+        reverse-engineers the WhatsApp Web protocol and can get the owner's number banned). Decided
+        in <code>docs/features/whatsapp-quick-query.md</code>; <code>CLAUDE.md</code> says the same.
+      </div>
+
+      <footer class="page-foot">
+        <span
+          >Sources: app/lib/secret-encryption.ts · docs/features/{stores, sefaz-nfe, alloy-api,
+          whatsapp-quick-query}.md</span
+        >
+        <span>KairosFlow</span>
+      </footer>
+    </section>
+  </body>
+</html>

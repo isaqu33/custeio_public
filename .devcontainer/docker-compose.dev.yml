@@ -1,0 +1,28 @@
+# Overrides the root docker-compose.dev.yml when opening the project in a Dev Container.
+# - Replaces the production KairosFlow runtime with a dev image that keeps the
+#   container alive and mounts the source so edits are live.
+# - Disables the worker by default (run it manually inside the dev container
+#   with `npm run worker` when you need it).
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    user: node
+    working_dir: /workspace
+    volumes:
+      - ../:/workspace:cached
+      - kairosflow_node_modules:/workspace/node_modules
+      - kairosflow_next_cache:/workspace/.next
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  worker:
+    profiles:
+      - with-worker
+
+volumes:
+  kairosflow_node_modules:
+  kairosflow_next_cache:
