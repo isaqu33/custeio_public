@@ -1,26 +1,27 @@
 name: CI
 
-# OFF until the product is in production (2026-09-17). Every push to any branch
-# on this private repo ran the whole pipeline, burning paid Actions minutes
-# while iterating fast in dev — the same problem the RayAI boilerplate this
-# project forked from hit and fixed the same way. The husky pre-push hook
-# already runs `npm run verify` and `npm run e2e:smoke` on every push, so
-# nothing here is unguarded meanwhile. Until then the pipeline runs only when
-# somebody starts it by hand, from the Actions tab.
-#
-# Unlike RayAI at the time of that fix, `verify` below doesn't need Mongo/Redis
-# to come back safely: every current unit suite mocks `connectDB`/Redis instead
-# of opening a real connection. If a suite ever starts talking to a live
-# database, give `verify` the same `services:` block `e2e-full` already has
-# before turning the triggers back on, or it will hang instead of failing fast.
+# Runs on every push to main and on every pull request: the same gate a
+# reviewer would apply by hand (format → lint → types → tests → build).
+# The browser (Playwright) suite is slower and needs Mongo + Redis, so it
+# stays out of the per-push gate and runs on demand from the Actions tab.
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  verify:
-    name: Verify (lint, types, unit)
+  check:
+    name: Format, lint, types, tests, build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,15 +35,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run verify
-        run: npm run verify
+      - name: Format
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Repository rules
+        run: |
+          npm run enforce:features
+          npm run enforce:feature-url-style
+          npm run enforce:worker-imports
+
+      - name: Unit tests
+        run: npm run test:ci
+
+      - name: Build
+        run: npm run build
 
   e2e-full:
-    name: E2E Full
+    name: E2E (manual)
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    needs: verify
-    # A browser run that stops making progress used to sit there until GitHub's
-    # 6-hour ceiling. Half an hour is already generous next to the local smoke run.
+    # A browser run that stops making progress would otherwise sit there until
+    # GitHub's 6-hour ceiling. Half an hour is generous next to a local run.
     timeout-minutes: 30
     services:
       mongo:
@@ -50,8 +69,8 @@ jobs:
         ports:
           - 27017:27017
         env:
-          MONGO_INITDB_ROOT_USERNAME: rayai_user
-          MONGO_INITDB_ROOT_PASSWORD: rayai_pass_local
+          MONGO_INITDB_ROOT_USERNAME: custeio_user
+          MONGO_INITDB_ROOT_PASSWORD: custeio_pass_local
         options: >-
           --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
           --health-interval 10s
@@ -72,9 +91,9 @@ jobs:
       # mongo/redis come from the service containers above, so the Playwright
       # global-setup must NOT try to start docker-compose dev dependencies.
       E2E_SKIP_DOCKER_DEPS: '1'
-      DATABASE_URL: mongodb://rayai_user:rayai_pass_local@localhost:27017/rayai?authSource=admin
-      MONGO_USERNAME: rayai_user
-      MONGO_PASSWORD: rayai_pass_local
+      DATABASE_URL: mongodb://custeio_user:custeio_pass_local@localhost:27017/custeio?authSource=admin
+      MONGO_USERNAME: custeio_user
+      MONGO_PASSWORD: custeio_pass_local
       REDIS_HOST: localhost
       REDIS_PORT: 6380
       REDIS_PASSWORD: ''
