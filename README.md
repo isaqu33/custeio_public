@@ -134,8 +134,7 @@ outra organização.
 | `npm run docs:api` | regenera [`docs/api.md`](docs/api.md) (87 endpoints) a partir do código das rotas              |
 
 O CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) roda formatação → lint → tipos → regras →
-testes → build em todo push e PR, e a integração com Mongo real em paralelo. O Dependabot atualiza
-npm e GitHub Actions toda semana.
+testes → build em todo push e PR, e a integração com Mongo real em paralelo.
 
 **O teste de integração detecta o erro?** Sim: quebrando de propósito a regra "a partir de qual status
 o pedido baixa o estoque", os 4 testes falham; com a regra de volta, passam.
